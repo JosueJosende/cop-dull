@@ -1,0 +1,21 @@
+{
+  "manifest_version": 3,
+  "name": "Cop d'ull",
+  "version": "1.0",
+  "description": "Extensió per a Chrome que permet tenir tots els marcadors al obrir una nova pàgina",
+  "permissions": [
+    "tabs",
+    "bookmarks",
+    "topSites",
+    "sessions",
+    "management"
+  ],
+  "chrome_url_overrides": {
+    "newtab": "copdull.html"
+  },
+  "icons": {
+    "16": "16.png",
+    "48": "48.png",
+    "128": "128.png"
+  }
+}

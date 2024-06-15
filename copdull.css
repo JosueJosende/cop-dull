@@ -1,0 +1,157 @@
+* {
+  box-sizing: border-box;
+  position: relative; 
+
+}
+html, body {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  width: 100%;
+  background: #e7e7e7;
+  margin: 0;
+}
+
+
+h1, h2 {
+  font-size: 16px;
+}
+
+ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+li {
+  margin-bottom: 5px;
+}
+
+a {
+  text-decoration: none;
+  color: #1a73e8;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+header {
+  cursor: default;
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 2;
+  height: 35px;
+  width: 100%;
+  border-top: 2px solid #2C3E50;
+}
+header button {
+  background-color: #2C3E50;
+  height: 38px;
+  position: relative;
+  top: -6px;
+  left: 8px;
+  padding: 0 3px;
+  border: 1px solid #1b2631;
+  border-radius: 5px;
+}
+header button svg {
+  fill: #b4c7dd;
+  width: 32px;
+  height: 32px;
+  margin-top: -4px;
+  stroke: #2C3E50;;
+  stroke-width: 1.5px;
+  stroke: #1b2631;
+}
+
+main {
+  margin: 50px 0 0 -2px;
+}
+
+.bookmarks {
+  position: relative;
+  margin: 0 auto;
+}
+
+.card {
+  position: absolute;
+  background-image: -webkit-linear-gradient(top, #fafafa, #f2f2f2);
+  border: 1px solid #fff;
+  box-shadow: 0 2px 2px rgba(0, 0, 0, .3);
+  overflow: hidden;
+  border-radius: 4px;
+  transition: box-shadow;
+  transition-timing-function: ease-out;
+  transition-duration: 200ms;
+  padding-bottom: 10px;
+} 
+.card .card-header {
+  /* display: flex;
+  align-items: center;
+  gap: 6px; */
+  margin-bottom: 16px;
+}
+.card h2.title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #929292;
+  padding: 4px 10px 5px 10px;
+  margin: 0;
+  background: #ebebeb;
+}
+
+.card .link, .card .folder-content {
+  display: flex;
+  justify-content: start;
+  align-items: center;
+  padding: 3px 10px;
+  gap: 4px;
+  width: 100%;
+  transition: all 0.3s ease;
+}
+
+
+.card .link:hover {
+  transform: translateX(5px);
+  cursor: pointer;
+}
+.card .link:hover > a {
+  color: #8eb6eb;
+}
+
+.card .link img {
+  width: 16px;
+  height: 16px;
+}
+.card .link a, card .folder-content span {
+  font-size: 12px;
+  color: #000;
+  font-weight: 400;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  width: 140px;
+} 
+
+.card .link a:hover {
+  text-decoration: none;
+  /* color: #8eb6eb;
+  transform: translateX(5px); */
+}
+
+/* .card:nth-child(4n - 8) {
+    background: #927823;
+}
+.card:nth-child(4n - 7) {
+    background: #5A363A;
+}
+
+.card:nth-child(4n - 6) {
+    background: #82212C;
+}
+
+.card:nth-child(4n - 5) {
+    background: #3A3E41;
+}
+.card:nth-child(4n - 4) {
+    background: #292A2B;
+} */
