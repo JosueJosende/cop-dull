@@ -3,22 +3,6 @@ import { displayApps } from './modules/apps.js'
 import { displayRecentTabs } from './modules/recentTabs.js'
 import { displayTopSites } from './modules/topSites.js'
 
-const $ = (el) => document.querySelector(el)
-
-const $bookmarks = $('.bookmarks')
-
-/* var bookmarks = new MiniMasonry({
-  container: '#bookmarkList',
-  baseWidth: 190,
-  surroundingGutter: true,
-  gutter: 10,
-  minify: true,
-  wedge: false,
-  direction: 'ltr'
-})
-
-bookmarks.layout() */
-
 document.addEventListener('DOMContentLoaded', function () {
   // Recuperar bookmarks
   chrome.bookmarks.getTree(function (bookmarkTreeNodes) {
@@ -26,46 +10,20 @@ document.addEventListener('DOMContentLoaded', function () {
   })
 
   // Recuperar aplicaciones instaladas
-  chrome.management.getAll(function (apps) {
+  /* chrome.management.getAll(function (apps) {
     displayApps(apps)
-  })
+  }) */
 
   // Recuperar pestañas recientemente cerradas
-  chrome.sessions.getRecentlyClosed(function (sessions) {
+  /* chrome.sessions.getRecentlyClosed(function (sessions) {
     displayRecentTabs(sessions)
-  })
+  }) */
 
   // Recuperar las páginas más visitadas
-  chrome.topSites.get(function (topSites) {
+  /* chrome.topSites.get(function (topSites) {
     displayTopSites(topSites)
-  })
+  }) */
 })
-
-/* chrome.bookmarks.getTree((bookmarks) => {
-  console.log(bookmarks);
-}); */
-
-/* document.addEventListener('DOMContentLoaded', function() {
-  // Recuperar bookmarks
-  chrome.bookmarks.getTree(function(bookmarkTreeNodes) {
-    displayBookmarks(bookmarkTreeNodes);
-  });
-
-  // Recuperar aplicaciones instaladas
-  chrome.management.getAll(function(apps) {
-    displayApps(apps);
-  });
-
-  // Recuperar pestañas recientemente cerradas
-  chrome.sessions.getRecentlyClosed(function(sessions) {
-    displayRecentTabs(sessions);
-  });
-
-  // Recuperar las páginas más visitadas
-  chrome.topSites.get(function(topSites) {
-    displayTopSites(topSites);
-  });
-}); */
 
 /* function displayBookmarks(nodes, parentElement) {
   const list = parentElement || document.getElementById('bookmarkList');
