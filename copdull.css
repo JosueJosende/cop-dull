@@ -64,7 +64,7 @@ header button svg {
 }
 
 main {
-  margin: 50px 0 0 -2px;
+  margin: 50px 0 20px 0;
 }
 
 .bookmarks {
@@ -79,9 +79,8 @@ main {
   box-shadow: 0 2px 2px rgba(0, 0, 0, .3);
   overflow: hidden;
   border-radius: 4px;
-  transition: box-shadow;
-  transition-timing-function: ease-out;
-  transition-duration: 200ms;
+  height: auto;
+  transition: all 300ms ease;
   padding-bottom: 10px;
 } 
 .card .card-header {
@@ -118,7 +117,9 @@ main {
   font-weight: 600;
 }
 
-
+.card .folder {
+  cursor: pointer;
+}
 
 
 .card .link:hover {
@@ -147,6 +148,36 @@ main {
   text-decoration: none;
   /* color: #8eb6eb;
   transform: translateX(5px); */
+}
+
+*::-webkit-scrollbar {
+  height: 2px;
+  width: 2px;
+}
+*::-webkit-scrollbar-track {
+  border-radius: 0px;
+  background-color: #DFE9EB;
+}
+
+*::-webkit-scrollbar-track:hover {
+  background-color: #B8C0C2;
+}
+
+*::-webkit-scrollbar-track:active {
+  background-color: #B8C0C2;
+}
+
+*::-webkit-scrollbar-thumb {
+  border-radius: 0px;
+  background-color: #B8C0C2;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background-color: #888E8F;
+}
+
+*::-webkit-scrollbar-thumb:active {
+  background-color: #696D6E;
 }
 
 /* .card:nth-child(4n - 8) {

@@ -67,6 +67,9 @@ export async function displayBookmarks(nodes) {
 
       content(child, cardElement, false)
       list.appendChild(cardElement)
+      requestAnimationFrame(() => {
+        cardElement.classList.add('visible')
+      })
     }
   }
 
@@ -78,7 +81,7 @@ export async function displayBookmarks(nodes) {
   const folders = $$('.folder')
   const titles = $$('.h2')
 
-  folders.forEach((folder) => folder.addEventListener('click', (e) => handleFolderClick(e), { once: true }))
+  folders.forEach((folder) => folder.addEventListener('click', (e) => handleFolderClick(e) /* , { once: true } */))
   titles.forEach((title) => title.addEventListener('click', (e) => backTo(e)))
 }
 
@@ -102,7 +105,7 @@ const content = (fill, parentElement, isFolder) => {
       // console.log('link')
       const link = document.createElement('div')
       link.classList.add('link')
-      link.classList.add(parentElement.id)
+      link.classList.add(parentElement.id.replace('c', 'f')) // parentElement.id
       if (isFolder) link.style.display = 'none'
 
       const img = document.createElement('img')
@@ -128,54 +131,86 @@ const addFolder = (folder, parentElement) => {}
 const addBookmark = (bookmark, parentElement) => {}
 
 const backTo = (e) => {
-  console.log(e)
   if (e.target.classList[0] === 'name' || e.target.classList[0] === 'title') {
     return
   }
 
-  let [currentFolder, parentFolder] = e.target.classList
+  let [currentFolder, parentFolder, idHeader] = e.target.classList
+
+  console.log(document.querySelector(`.${parentFolder}`).parentElement.parentElement)
 
   currentFolder = currentFolder.replace('h', 'f')
   parentFolder = parentFolder.replace('h', 'f')
 
-  // console.log(currentFolder, parentFolder)
-
   document.querySelectorAll(`.${parentFolder}`).forEach((el) => (el.style.display = 'none'))
+  document.querySelector(`#${parentFolder}`).style.height = 'auto'
+
   document.querySelectorAll(`.${currentFolder}`).forEach((el) => (el.style.display = 'flex'))
+  //document.querySelector(`#${currentFolder}`).style.height = 'auto'
+
+  /* const card = e.target.getAttribute('card') */
+
+  const heightCard = document.querySelector(`#${idHeader}`)
+  heightCard.style.height = 'auto'
+  heightCard.style.height = heightCard.scrollHeight + 'px'
+
+  //.style.height = 'auto'
 
   reloadMasonry()
+
+  e.target.remove()
 }
 
-const addFolderTitle = (idHeader, nameFolder, currentFolder, parentFolder) => {
+const addFolderTitle = (idHeader, nameFolder, currentFolder, parentFolder, card) => {
   const titleHeader = document.querySelector(`#${idHeader} .card-header .h2`)
 
   const span = document.createElement('span')
   span.classList.add(parentFolder.replace('f', 'h'))
   span.classList.add(currentFolder.replace('f', 'h'))
-  span.textContent = ' / ' + nameFolder
+  span.style.cursor = 'pointer'
+  span.style.fontWeight = 400
+  span.style.letterSpacing = '0.05rem'
+  span.classList.add(idHeader)
+  /* span.setAttribute('card', card) */
+  span.textContent = '/' + nameFolder
   titleHeader.appendChild(span)
 }
 
+let element = null
 let idHeader
 
 const handleFolderClick = (e) => {
-  const folder = e.target.parentElement
-  const nameFolder = e?.target?.textContent
-  const currentFolder = folder.id
+  if (element !== e.target) {
+    element = e.target
+    const folder = e.target.parentElement
+    const nameFolder = e?.target?.textContent
+    const currentFolder = folder.id
 
-  let parentFolder = folder.parentElement.id
+    let parentFolder = folder.parentElement.id
+    const card = parentFolder
 
-  if (parentFolder.at(0) === 'c') {
-    idHeader = parentFolder
-    parentFolder = parentFolder.replace('c', 'f')
+    if (parentFolder.at(0) === 'c') {
+      idHeader = parentFolder
+      parentFolder = parentFolder.replace('c', 'f')
+    }
+
+    addFolderTitle(idHeader, nameFolder, currentFolder, parentFolder, card)
+
+    document.querySelectorAll(`.${parentFolder}`).forEach((el) => (el.style.display = 'none'))
+
+    document.querySelectorAll(`.${currentFolder}`).forEach((el) => (el.style.display = 'flex'))
+    document.querySelector(`#${currentFolder}`).style.height = 'auto'
+
+    folder.style.display = 'flex'
+    folder.style.flexDirection = 'column'
+
+    const heightCard = document.querySelector(`#${idHeader}`)
+    heightCard.style.height = 'auto'
+    heightCard.style.height = heightCard.scrollHeight + 'px'
+
+    reloadMasonry()
+  } else {
+    element = null
   }
-
-  addFolderTitle(idHeader, nameFolder, currentFolder, parentFolder)
-
-  document.querySelectorAll(`.${parentFolder}`).forEach((el) => (el.style.display = 'none'))
-  document.querySelectorAll(`.${currentFolder}`).forEach((el) => (el.style.display = 'flex'))
-  folder.style.display = 'flex'
-  folder.style.flexDirection = 'column'
-
-  reloadMasonry()
+  //console.log(e.target, element)
 }
