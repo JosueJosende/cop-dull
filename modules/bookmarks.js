@@ -21,50 +21,6 @@ export async function displayBookmarks(nodes) {
           <span class="name">${cards[card][0].title}</span
         </div>`
 
-      /* const content = (fill, parentElement, isFolder) => {
-        // console.log('folder')
-        Object.entries(fill.children).forEach(([key, node]) => {
-          if (node.children) {
-            console.log(node.title)
-            // is folder
-            const folder = document.createElement('div')
-            folder.classList.add('folder')
-            // folder.classList.add(parentElement.id)
-            folder.id = `f${node.id}`
-            if (isFolder) folder.style.display = 'none'
-
-            folder.innerHTML = `<div class="folder-title f${cards[card][0].id}">${node.title}</div>`
-
-            if (isFolder) {
-              parentElement.appendChild(folder)
-            } else {
-              cardElement.appendChild(folder)
-            }
-
-            content(node, folder, true)
-          } else {
-            // console.log('link')
-            const link = document.createElement('div')
-            link.classList.add('link')
-            link.classList.add(parentElement.id)
-            if (isFolder) link.style.display = 'none'
-
-            const img = document.createElement('img')
-            img.src = `https://s2.googleusercontent.com/s2/favicons?domain=${node.url}`
-            // img.alt = node.title
-
-            const a = document.createElement('a')
-            a.href = node.url
-            a.textContent = node.title
-
-            link.appendChild(img)
-            link.appendChild(a)
-
-            parentElement.appendChild(link)
-          }
-        })
-      } */
-
       content(child, cardElement, false)
       list.appendChild(cardElement)
       requestAnimationFrame(() => {
@@ -75,7 +31,6 @@ export async function displayBookmarks(nodes) {
 
   initMasonry()
 
-  const $ = (el) => document.querySelector(el)
   const $$ = (el) => document.querySelectorAll(el)
 
   const folders = $$('.folder')
@@ -102,7 +57,6 @@ const content = (fill, parentElement, isFolder) => {
 
       content(node, folder, true)
     } else {
-      // console.log('link')
       const link = document.createElement('div')
       link.classList.add('link')
       link.classList.add(parentElement.id.replace('c', 'f')) // parentElement.id
@@ -110,7 +64,6 @@ const content = (fill, parentElement, isFolder) => {
 
       const img = document.createElement('img')
       img.src = `https://s2.googleusercontent.com/s2/favicons?domain=${node.url}`
-      // img.alt = node.title
 
       const a = document.createElement('a')
       a.href = node.url
@@ -137,8 +90,6 @@ const backTo = (e) => {
 
   let [currentFolder, parentFolder, idHeader] = e.target.classList
 
-  console.log(document.querySelector(`.${parentFolder}`).parentElement.parentElement)
-
   currentFolder = currentFolder.replace('h', 'f')
   parentFolder = parentFolder.replace('h', 'f')
 
@@ -146,18 +97,12 @@ const backTo = (e) => {
   document.querySelector(`#${parentFolder}`).style.height = 'auto'
 
   document.querySelectorAll(`.${currentFolder}`).forEach((el) => (el.style.display = 'flex'))
-  //document.querySelector(`#${currentFolder}`).style.height = 'auto'
-
-  /* const card = e.target.getAttribute('card') */
 
   const heightCard = document.querySelector(`#${idHeader}`)
   heightCard.style.height = 'auto'
   heightCard.style.height = heightCard.scrollHeight + 'px'
 
-  //.style.height = 'auto'
-
   reloadMasonry()
-
   e.target.remove()
 }
 
@@ -212,5 +157,4 @@ const handleFolderClick = (e) => {
   } else {
     element = null
   }
-  //console.log(e.target, element)
 }
