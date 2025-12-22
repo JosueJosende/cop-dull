@@ -497,3 +497,34 @@ main {
   from { transform: translateY(20px); opacity: 0; }
   to { transform: translateY(0); opacity: 1; }
 }
+
+/* Drag & Drop Styles */
+.dragging {
+  opacity: 0.5;
+  background: #e8f0fe;
+}
+
+.drop-placeholder {
+  height: 2px;
+  background: #1a73e8;
+  margin: 5px 0;
+  border-radius: 1px;
+  position: relative;
+}
+
+.drop-placeholder::before {
+  content: '';
+  position: absolute;
+  left: -4px;
+  top: -3px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #1a73e8;
+}
+
+.drop-target-folder {
+  background-color: #e8f0fe !important; /* Highlight folder */
+  border: 1px dashed #1a73e8 !important;
+  border-radius: 4px;
+}

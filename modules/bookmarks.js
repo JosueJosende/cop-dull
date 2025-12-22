@@ -61,7 +61,9 @@ const content = (fill, parentElement, isFolder) => {
       folder.classList.add('folder')
       folder.classList.add(`f${fill.id}`) // Class to identify siblings
       folder.id = `f${node.id}`
+      folder.dataset.id = node.id
       folder.dataset.title = node.title
+      folder.draggable = true
 
       if (isFolder) folder.style.display = 'none'
 
@@ -73,6 +75,7 @@ const content = (fill, parentElement, isFolder) => {
     } else {
       const link = document.createElement('div')
       link.dataset.id = node.id
+      link.draggable = true
       link.classList.add('link')
       link.classList.add(parentElement.id.replace('c', 'f')) 
       // If we are appending to a card, parentElement.id is cID. 

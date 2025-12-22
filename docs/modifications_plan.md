@@ -61,6 +61,17 @@ Este documento detalla el plan de trabajo para implementar las funcionalidades s
 **Beneficio**: Mejor experiencia de usuario.
 **Implementación**: Añadir un botón de "volver atras" en vez de navegación "miga de pan" (breadcrumbs) en la cabecera de la tarjeta para volver atrás. Ejemplo: en la parte izquierda mostrar el nombre de la carpeta actual y un botón de "volver atras" en la parte derecha que permita volver a la carpeta anterior.
 
+### 10. Modificar y Eliminar Carpetas
+**Descripción**: Gestión completa de carpetas desde la nueva pestaña.
+**Beneficio**: Mejor experiencia de usuario.
+**Implementación**:
+- **Menú Contextual**: Añadir menú click derecho en cada carpeta.
+- **Acciones**:
+  - **Editar**: Abrir un modal para cambiar Título y URL. Usar `chrome.bookmarks.update`.
+  - **Eliminar**: Mostrar confirmación y borrar todas las carpetas y marcadores que pertenecen a la carpeta usando `chrome.bookmarks.remove`.
+- **Actualización UI**: Reflejar los cambios inmediatamente en el DOM sin recargar.
+- **Prioridad**: Media.
+
 ## Hoja de Ruta (Roadmap)
 
 ### Fase 1: Reactivación y Limpieza
@@ -75,8 +86,8 @@ Este documento detalla el plan de trabajo para implementar las funcionalidades s
 ### Fase 3: Experiencia de Usuario
 - [ ] Añadir animaciones de transición.
 - [ ] Mejorar el diseño de las tarjetas (feedback visual al hacer hover).
-- [ ] Implementar Drag & Drop básico.
-
-### Fase 4: Configuración
+- [x] Implementar Drag & Drop básico.
+ 
+ ### Fase 4: Configuración
 - [ ] Panel de preferencias (toggle para mostrar/ocultar Apps, Recientes, etc.).
 - [ ] Selección de Tema.

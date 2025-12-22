@@ -4,11 +4,14 @@ import { displayRecentTabs } from './modules/recentTabs.js'
 import { displayTopSites } from './modules/topSites.js'
 import { initSearch } from './modules/search.js'
 import { initContextMenu } from './modules/contextMenu.js'
+import { initDragDrop } from './modules/dragDrop.js'
 
 document.addEventListener('DOMContentLoaded', function () {
   // Recuperar bookmarks
   chrome.bookmarks.getTree(function (bookmarkTreeNodes) {
-    displayBookmarks(bookmarkTreeNodes)
+    displayBookmarks(bookmarkTreeNodes).then(() => {
+        initDragDrop()
+    })
   })
 
   initSearch()
