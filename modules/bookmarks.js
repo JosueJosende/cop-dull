@@ -7,22 +7,36 @@ export async function displayBookmarks(nodes) {
     return title
   })
 
+  const list = document.getElementById('bookmarkList')
+  list.innerHTML = '' // Clear list if needed
+
   for (const card in cards) {
     const child = cards[card][0]
-    const list = document.getElementById('bookmarkList')
-
+    
     if (child.children) {
       // Create a card for each title
       const cardElement = document.createElement('div')
       cardElement.classList.add('card')
-      cardElement.id = `c${cards[card][0].id}`
-      cardElement.innerHTML = `<div class="card-header">
-        <div class="title h2">
-          <span class="name">${cards[card][0].title}</span
+      cardElement.id = `c${child.id}`
+      cardElement.dataset.title = child.title
+      cardElement.dataset.currentId = `f${child.id}`
+
+      // SVG for Back Button
+      const backSvg = `<svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"></path></svg>`
+
+      cardElement.innerHTML = `
+        <div class="card-header">
+          <div class="title h2">
+            <span class="name">${child.title}</span>
+          </div>
+          <div class="back-button" style="display: none;" title="Go Back">
+            ${backSvg}
+          </div>
         </div>`
 
       content(child, cardElement, false)
       list.appendChild(cardElement)
+      
       requestAnimationFrame(() => {
         cardElement.classList.add('visible')
       })
@@ -31,13 +45,12 @@ export async function displayBookmarks(nodes) {
 
   initMasonry()
 
-  const $$ = (el) => document.querySelectorAll(el)
+  // Event Listeners
+  const folders = document.querySelectorAll('.folder')
+  folders.forEach((folder) => folder.addEventListener('click', handleFolderClick))
 
-  const folders = $$('.folder')
-  const titles = $$('.h2')
-
-  folders.forEach((folder) => folder.addEventListener('click', (e) => handleFolderClick(e) /* , { once: true } */))
-  titles.forEach((title) => title.addEventListener('click', (e) => backTo(e)))
+  const backButtons = document.querySelectorAll('.back-button')
+  backButtons.forEach(btn => btn.addEventListener('click', goBack))
 }
 
 const content = (fill, parentElement, isFolder) => {
@@ -46,8 +59,9 @@ const content = (fill, parentElement, isFolder) => {
       // is folder
       const folder = document.createElement('div')
       folder.classList.add('folder')
-      folder.classList.add(`f${fill.id}`)
+      folder.classList.add(`f${fill.id}`) // Class to identify siblings
       folder.id = `f${node.id}`
+      folder.dataset.title = node.title
 
       if (isFolder) folder.style.display = 'none'
 
@@ -59,7 +73,14 @@ const content = (fill, parentElement, isFolder) => {
     } else {
       const link = document.createElement('div')
       link.classList.add('link')
-      link.classList.add(parentElement.id.replace('c', 'f')) // parentElement.id
+      link.classList.add(parentElement.id.replace('c', 'f')) 
+      // If we are appending to a card, parentElement.id is cID. 
+      // But notice recursive call: content(child, cardElement, false). 
+      // parentElement is card. card.id is cID. 
+      // We want items to have class fID.
+      // So replace('c', 'f') works for root level.
+      // For deeper levels, parentElement is a folder with id fID. Replace does nothing.
+      
       if (isFolder) link.style.display = 'none'
 
       const img = document.createElement('img')
@@ -77,84 +98,156 @@ const content = (fill, parentElement, isFolder) => {
   })
 }
 
-const getFavicon = async (url) => {}
 
-const addFolder = (folder, parentElement) => {}
-
-const addBookmark = (bookmark, parentElement) => {}
-
-const backTo = (e) => {
-  if (e.target.classList[0] === 'name' || e.target.classList[0] === 'title') {
-    return
-  }
-
-  let [currentFolder, parentFolder, idHeader] = e.target.classList
-
-  currentFolder = currentFolder.replace('h', 'f')
-  parentFolder = parentFolder.replace('h', 'f')
-
-  document.querySelectorAll(`.${parentFolder}`).forEach((el) => (el.style.display = 'none'))
-  document.querySelector(`#${parentFolder}`).style.height = 'auto'
-
-  document.querySelectorAll(`.${currentFolder}`).forEach((el) => (el.style.display = 'flex'))
-
-  const heightCard = document.querySelector(`#${idHeader}`)
-  heightCard.style.height = 'auto'
-  heightCard.style.height = heightCard.scrollHeight + 'px'
-
-  reloadMasonry()
-  e.target.remove()
-}
-
-const addFolderTitle = (idHeader, nameFolder, currentFolder, parentFolder, card) => {
-  const titleHeader = document.querySelector(`#${idHeader} .card-header .h2`)
-
-  const span = document.createElement('span')
-  span.classList.add(parentFolder.replace('f', 'h'))
-  span.classList.add(currentFolder.replace('f', 'h'))
-  span.style.cursor = 'pointer'
-  span.style.fontWeight = 400
-  span.style.letterSpacing = '0.05rem'
-  span.classList.add(idHeader)
-  /* span.setAttribute('card', card) */
-  span.textContent = '/' + nameFolder
-  titleHeader.appendChild(span)
-}
-
-let element = null
-let idHeader
 
 const handleFolderClick = (e) => {
-  if (element !== e.target) {
-    element = e.target
-    const folder = e.target.parentElement
-    const nameFolder = e?.target?.textContent
-    const currentFolder = folder.id
+  e.stopPropagation()
+  const folder = e.currentTarget
+  const card = folder.closest('.card')
 
-    let parentFolder = folder.parentElement.id
-    const card = parentFolder
+  if (card.dataset.currentId === folder.id) return
 
-    if (parentFolder.at(0) === 'c') {
-      idHeader = parentFolder
-      parentFolder = parentFolder.replace('c', 'f')
-    }
+  const newId = folder.id 
+  const newName = folder.dataset.title
+  const currentDisplayedId = card.dataset.currentId 
 
-    addFolderTitle(idHeader, nameFolder, currentFolder, parentFolder, card)
+  console.log(`[Enter] From: ${currentDisplayedId} To: ${newId} (${newName})`)
 
-    document.querySelectorAll(`.${parentFolder}`).forEach((el) => (el.style.display = 'none'))
+  // 1. Hide Current Items (Siblings)
+  const currentItems = card.querySelectorAll(`.${currentDisplayedId}`)
+  currentItems.forEach(el => {
+      if (el === folder) return 
+      el.style.display = 'none'
+  })
 
-    document.querySelectorAll(`.${currentFolder}`).forEach((el) => (el.style.display = 'flex'))
-    document.querySelector(`#${currentFolder}`).style.height = 'auto'
+  // 2. Prepare Target Folder (Container)
+  // We use setProperty to ensure priority
+  folder.style.setProperty('display', 'flex', 'important')
+  folder.style.setProperty('flex-direction', 'column', 'important')
+  folder.style.width = '100%'
+  folder.style.height = 'auto'
+  folder.style.cursor = 'default' 
+  folder.style.position = 'relative'
 
-    folder.style.display = 'flex'
-    folder.style.flexDirection = 'column'
+  // 3. Show Children
+  let found = 0
+  const children = Array.from(folder.children)
+  children.forEach(child => {
+      if (child.classList.contains('folder-title')) {
+          child.style.display = 'none'
+      } else {
+          child.style.setProperty('display', 'flex', 'important')
+          child.style.width = '100%'
+          
+          if (child.classList.contains('folder')) {
+            child.style.flexDirection = 'column'
+            child.style.cursor = 'pointer'
+            
+            // Ensure sub-folder titles are visible
+            const subTitle = child.querySelector('.folder-title')
+            if (subTitle) subTitle.style.display = 'flex'
+          }
+          found++
+      }
+  })
+  console.log(`[Enter] Children toggled: ${found}`)
 
-    const heightCard = document.querySelector(`#${idHeader}`)
-    heightCard.style.height = 'auto'
-    heightCard.style.height = heightCard.scrollHeight + 'px'
+  // 4. Update Header
+  const titleSpan = card.querySelector('.card-header .title .name')
+  titleSpan.textContent = newName
 
+  // 5. Show Back Button
+  const backBtn = card.querySelector('.back-button')
+  backBtn.style.display = 'flex'
+
+  // 6. Update State
+  card.dataset.currentId = newId
+  
+  // 7. Recalculate Layout
+  // Use a timeout to allow DOM to settle and styles to apply before measuring height
+  setTimeout(() => {
+    card.style.height = 'auto'
+    const h = card.scrollHeight
+    console.log(`New Card Height: ${h}`)
+    card.style.height = h + 'px'
     reloadMasonry()
-  } else {
-    element = null
-  }
+  }, 50)
 }
+
+const goBack = (e) => {
+  e.stopPropagation()
+  const btn = e.currentTarget
+  const card = btn.closest('.card')
+  
+  const currentId = card.dataset.currentId
+  const currentFolderDiv = document.getElementById(currentId)
+  
+  if (!currentFolderDiv) { console.error("Current folder div not found!"); return; }
+
+  const parentContainer = currentFolderDiv.parentElement
+  const parentId = parentContainer.id
+  
+  // Determine Destination
+  let destId = ''
+  let destTitle = ''
+  let showBack = true
+  
+  if (parentId.startsWith('c')) {
+    destId = 'f' + parentId.substring(1) 
+    destTitle = card.dataset.title
+    showBack = false
+  } else {
+    destId = parentId 
+    destTitle = parentContainer.dataset.title
+  }
+  
+  console.log(`[Back] From: ${currentId} To: ${destId}`)
+
+  // 1. Hide Current Items (Children of the folder we are leaving)
+  const currentItems = card.querySelectorAll(`.${currentId}`)
+  currentItems.forEach(el => el.style.display = 'none')
+  
+  // 2. Hide/Reset the Container Folder we are leaving
+  // It needs to look like a button/folder item again.
+  currentFolderDiv.style.width = ''
+  currentFolderDiv.style.cursor = 'pointer'
+  
+  // Re-show the title of the folder we are leaving, since it is now just an item
+  const internalTitle = currentFolderDiv.querySelector('.folder-title')
+  if (internalTitle) internalTitle.style.display = 'flex'
+  
+  // 3. Show Destination Items (Siblings of the folder we just left)
+  const destItems = card.querySelectorAll(`.${destId}`)
+  destItems.forEach(el => {
+    el.style.setProperty('display', 'flex', 'important')
+    // If it's a folder (including the one we just left), ensure it looks right
+    if(el.classList.contains('folder')) {
+      el.style.flexDirection = 'column' 
+      el.style.width = '100%' 
+      
+      // Ensure their titles are visible (logic above handles the specific one we left, but good to be safe)
+      const t = el.querySelector('.folder-title')
+      if(t) t.style.display = 'flex'
+    }
+  })
+  
+  // 4. Update Header
+  const titleSpan = card.querySelector('.card-header .title .name')
+  titleSpan.textContent = destTitle
+  
+  // 5. Update Back Button
+  if (!showBack) {
+    btn.style.display = 'none'
+  }
+  
+  // 6. Update State
+  card.dataset.currentId = destId
+  
+  // 7. Layout
+  setTimeout(() => {
+     card.style.height = 'auto'
+     card.style.height = card.scrollHeight + 'px'
+     reloadMasonry()
+  }, 50)
+}
+

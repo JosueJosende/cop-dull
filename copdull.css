@@ -84,18 +84,45 @@ main {
   padding-bottom: 10px;
 } 
 .card .card-header {
-  /* display: flex;
+  display: flex;
+  justify-content: space-between;
   align-items: center;
-  gap: 6px; */
   margin-bottom: 16px;
+  background: #ebebeb;
+  padding: 4px 10px;
 }
 .card .h2.title {
   font-size: 13px;
   font-weight: 700;
   color: #929292;
-  padding: 4px 10px 5px 10px;
   margin: 0;
-  background: #ebebeb;
+  padding: 0;
+  background: transparent;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 150px;
+}
+
+.card .back-button {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  transition: background 0.2s;
+}
+
+.card .back-button:hover {
+  background: #d4d4d4;
+}
+
+.card .back-button svg {
+  width: 14px;
+  height: 14px;
+  fill: #757575;
 }
 
 .card .link, .card .folder-title {
@@ -119,6 +146,7 @@ main {
 
 .card .folder {
   cursor: pointer;
+  width: 100%;
 }
 
 
