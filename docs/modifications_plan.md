@@ -20,7 +20,7 @@ Este documento detalla el plan de trabajo para implementar las funcionalidades s
 - Renderizar las aplicaciones en una sección separada o integrada en el layout masonry.
 - **Prioridad**: Media.
 
-### 3. Modificar y Eliminar Favoritos
+### 3. Modificar y Eliminar Favoritos (IMPLEMENTADO)
 **Objetivo**: Gestión completa de marcadores desde la nueva pestaña.
 **Implementación**:
 - **Menú Contextual**: Añadir menú click derecho en cada marcador.
