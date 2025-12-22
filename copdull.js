@@ -2,12 +2,15 @@ import { displayBookmarks } from './modules/bookmarks.js'
 import { displayApps } from './modules/apps.js'
 import { displayRecentTabs } from './modules/recentTabs.js'
 import { displayTopSites } from './modules/topSites.js'
+import { initSearch } from './modules/search.js'
 
 document.addEventListener('DOMContentLoaded', function () {
   // Recuperar bookmarks
   chrome.bookmarks.getTree(function (bookmarkTreeNodes) {
     displayBookmarks(bookmarkTreeNodes)
   })
+
+  initSearch()
 
   // Recuperar aplicaciones instaladas
   /* chrome.management.getAll(function (apps) {

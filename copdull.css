@@ -35,9 +35,6 @@ a:hover {
 
 header {
   cursor: default;
-  position: fixed;
-  left: 0;
-  top: 0;
   z-index: 2;
   height: 35px;
   width: 100%;
@@ -64,7 +61,7 @@ header button svg {
 }
 
 main {
-  margin: 50px 0 20px 0;
+  margin: 44px 0 20px 0;
 }
 
 .bookmarks {
@@ -225,3 +222,123 @@ main {
 .card:nth-child(4n - 4) {
     background: #292A2B;
 } */
+
+/* Search Styles */
+.search-wrapper {
+  position: absolute;
+  top: 16px;
+  left: 0;
+  right: 0;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none; /* Allow clicks on the menu button behind it if needed, but input catches its own events */
+}
+
+#searchInput {
+  pointer-events: auto;
+  width: 480px; /* Match card width */
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  padding: 6px 15px;
+  font-size: 15px;
+  background: #f1f3f4;
+  outline: none;
+  transition: all 0.2s;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+
+#searchInput:focus {
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+  border-color: #1a73e8;
+}
+
+.search-results {
+  width: 480px;
+  margin: 50px auto 20px auto;
+  padding-bottom: 10px;
+  
+  /* Card Styles */
+  position: relative; /* Changed from absolute to flow normally in the center */
+  background-image: -webkit-linear-gradient(top, #fafafa, #f2f2f2);
+  border: 1px solid #fff;
+  box-shadow: 0 2px 2px rgba(0, 0, 0, .3);
+  overflow: hidden;
+  border-radius: 4px;
+  min-height: 50px;
+}
+
+/* Mimic Card Header for results or just list them matching .link styles */
+.search-results .header-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 5px;
+  background: #ebebeb;
+  padding: 4px 10px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #929292;
+}
+
+.search-result-item {
+  display: flex;
+  justify-content: start;
+  align-items: center;
+  padding: 3px 10px;
+  gap: 4px;
+  transition: all 0.3s ease;
+  font-size: 12px;
+  width: 100%;
+  cursor: pointer;
+  border-bottom: none; /* Remove previous border */
+}
+
+.search-result-item:hover {
+  transform: translateX(5px);
+  background: transparent; /* Remove previous hover bg */
+}
+
+.search-result-item:hover a {
+  color: #8eb6eb;
+}
+
+.search-result-item img {
+  width: 16px;
+  height: 16px;
+  margin-right: 0; /* Gap handles spacing */
+}
+
+.search-result-item a {
+  color: #000;
+  font-size: 12px;
+  flex: 1;
+  text-decoration: none;
+  
+  /* Match .card .link a truncation styles */
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.search-result-path {
+  font-size: 10px;
+  color: #aaa;
+  margin-left: auto; /* Push to right */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 150px;
+}
+
+.fade-in {
+  opacity: 1;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.fade-out {
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+}

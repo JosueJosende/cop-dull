@@ -4,7 +4,7 @@ Este documento detalla el plan de trabajo para implementar las funcionalidades s
 
 ## Funcionalidades Solicitadas
 
-### 1. Búsqueda de Favoritos Guardados
+### 1. Búsqueda de Favoritos Guardados (IMPLEMENTADO)
 **Objetivo**: Permitir al usuario encontrar rápidamente un marcador por su título o URL.
 **Implementación**:
 - Agregar una barra de búsqueda fija en la parte superior (`<header>`).
@@ -25,8 +25,8 @@ Este documento detalla el plan de trabajo para implementar las funcionalidades s
 **Implementación**:
 - **Menú Contextual**: Añadir un botón de "opciones" (tres puntos) o menú click derecho en cada marcador.
 - **Acciones**:
-    - **Editar**: Abrir un modal para cambiar Título y URL. Usar `chrome.bookmarks.update`.
-    - **Eliminar**: Mostrar confirmación y borrar usando `chrome.bookmarks.remove`.
+  - **Editar**: Abrir un modal para cambiar Título y URL. Usar `chrome.bookmarks.update`.
+  - **Eliminar**: Mostrar confirmación y borrar usando `chrome.bookmarks.remove`.
 - **Actualización UI**: Reflejar los cambios inmediatamente en el DOM sin recargar.
 - **Prioridad**: Alta.
 
@@ -69,7 +69,7 @@ Este documento detalla el plan de trabajo para implementar las funcionalidades s
 - [ ] Limpiar y unificar estilos CSS.
 
 ### Fase 2: Funcionalidades Core (User Requests)
-- [ ] Implementar Barra de Búsqueda.
+- [x] Implementar Barra de Búsqueda.
 - [ ] Implementar Editar/Eliminar Marcadores (UI + Lógica).
 
 ### Fase 3: Experiencia de Usuario
