@@ -3,6 +3,7 @@ import { displayApps } from './modules/apps.js'
 import { displayRecentTabs } from './modules/recentTabs.js'
 import { displayTopSites } from './modules/topSites.js'
 import { initSearch } from './modules/search.js'
+import { initContextMenu } from './modules/contextMenu.js'
 
 document.addEventListener('DOMContentLoaded', function () {
   // Recuperar bookmarks
@@ -11,6 +12,7 @@ document.addEventListener('DOMContentLoaded', function () {
   })
 
   initSearch()
+  initContextMenu()
 
   // Recuperar aplicaciones instaladas
   /* chrome.management.getAll(function (apps) {

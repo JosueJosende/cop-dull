@@ -19,10 +19,35 @@
     <article class="page bookmarks" id="bookmarkList">
       
     </article>
-    <!-- <article class="page appsList" style="opacity: 0" id="apps"></article>
-    <article class="page recentTabsList" style="opacity: 0" id="recentTabs"></article>
-    <article class="page topSitesList" style="opacity: 0" id="topSites"></article> -->
   </main>
+
+  <!-- Context Menu -->
+  <div id="contextMenu" class="context-menu" style="display: none;">
+    <div class="menu-item" id="menuEdit">Editar</div>
+    <div class="menu-item delete" id="menuDelete">Eliminar</div>
+  </div>
+
+  <!-- Edit Modal -->
+  <div id="editModal" class="modal-overlay" style="display: none;">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Editar Favorito</h3>
+        <button id="closeModal" class="close-btn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <label for="editTitle">Título</label>
+        <input type="text" id="editTitle" class="form-control">
+        
+        <label for="editUrl">URL</label>
+        <input type="text" id="editUrl" class="form-control">
+      </div>
+      <div class="modal-footer">
+        <button id="saveEdit" class="btn btn-primary">Guardar</button>
+        <button id="cancelEdit" class="btn btn-secondary">Cancelar</button>
+      </div>
+    </div>
+  </div>
+
   <script src="lib/minimasonry.min.js"></script>
   <script type="module" src="copdull.js"></script>
 </body>

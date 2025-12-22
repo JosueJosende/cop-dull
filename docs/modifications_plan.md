@@ -23,7 +23,7 @@ Este documento detalla el plan de trabajo para implementar las funcionalidades s
 ### 3. Modificar y Eliminar Favoritos
 **Objetivo**: Gestión completa de marcadores desde la nueva pestaña.
 **Implementación**:
-- **Menú Contextual**: Añadir un botón de "opciones" (tres puntos) o menú click derecho en cada marcador.
+- **Menú Contextual**: Añadir menú click derecho en cada marcador.
 - **Acciones**:
   - **Editar**: Abrir un modal para cambiar Título y URL. Usar `chrome.bookmarks.update`.
   - **Eliminar**: Mostrar confirmación y borrar usando `chrome.bookmarks.remove`.
@@ -70,7 +70,7 @@ Este documento detalla el plan de trabajo para implementar las funcionalidades s
 
 ### Fase 2: Funcionalidades Core (User Requests)
 - [x] Implementar Barra de Búsqueda.
-- [ ] Implementar Editar/Eliminar Marcadores (UI + Lógica).
+- [x] Implementar Editar/Eliminar Marcadores (UI + Lógica).
 
 ### Fase 3: Experiencia de Usuario
 - [ ] Añadir animaciones de transición.

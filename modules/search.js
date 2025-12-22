@@ -86,7 +86,8 @@ function flattenBookmarks(node, path) {
     items.push({
       title: node.title,
       url: node.url,
-      path: path
+      path: path,
+      id: node.id
     })
   }
   
@@ -116,6 +117,7 @@ function renderResults(matches, container) {
   matches.forEach(item => {
     const div = document.createElement('div')
     div.className = 'search-result-item'
+    div.dataset.id = item.id
     
     const img = document.createElement('img')
     img.src = `https://s2.googleusercontent.com/s2/favicons?domain=${item.url}`

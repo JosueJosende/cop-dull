@@ -72,6 +72,7 @@ const content = (fill, parentElement, isFolder) => {
       content(node, folder, true)
     } else {
       const link = document.createElement('div')
+      link.dataset.id = node.id
       link.classList.add('link')
       link.classList.add(parentElement.id.replace('c', 'f')) 
       // If we are appending to a card, parentElement.id is cID. 
