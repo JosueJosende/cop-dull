@@ -1,6 +1,8 @@
 
 export function initContextMenu() {
   const contextMenu = document.getElementById('contextMenu')
+  const menuOpenNewTab = document.getElementById('menuOpenNewTab')
+  const menuSeparator = document.querySelector('.menu-separator')
   const menuEdit = document.getElementById('menuEdit')
   const menuDelete = document.getElementById('menuDelete')
   
@@ -13,18 +15,29 @@ export function initContextMenu() {
 
   let targetId = null
   let targetElement = null
+  let targetIsFolder = false
 
   // --- Context Menu Handler ---
   document.addEventListener('contextmenu', (e) => {
     // Check if right-clicked element is a bookmark link or search result item
-    const link = e.target.closest('.link, .search-result-item')
+    const link = e.target.closest('.link, .folder, .search-result-item')
     
     if (link && link.dataset.id) {
       e.preventDefault()
       
       targetElement = link
       targetId = link.dataset.id
+      targetIsFolder = link.classList.contains('folder')
       
+      // Show/Hide Open New Tab for folders
+      if (targetIsFolder) {
+        menuOpenNewTab.style.display = 'none'
+        menuSeparator.style.display = 'none'
+      } else {
+        menuOpenNewTab.style.display = 'block'
+        menuSeparator.style.display = 'block'
+      }
+
       // Position menu
       const { clientX: mouseX, clientY: mouseY } = e
       
@@ -52,6 +65,23 @@ export function initContextMenu() {
   }
 
   // --- Actions ---
+
+  // OPEN IN NEW TAB
+  menuOpenNewTab.addEventListener('click', () => {
+    hideContextMenu()
+    if (!targetId || targetIsFolder) return
+
+    chrome.bookmarks.get(targetId, (results) => {
+      if (chrome.runtime.lastError || !results || !results.length) {
+        alert('Error fetching bookmark')
+        return
+      }
+      const bookmark = results[0]
+      if (bookmark.url) {
+        window.open(bookmark.url, '_blank')
+      }
+    })
+  })
 
   // EDIT
   menuEdit.addEventListener('click', () => {

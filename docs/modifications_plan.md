@@ -37,7 +37,7 @@ Este documento detalla el plan de trabajo para implementar las funcionalidades s
 **Beneficio**: Acceso rápido a la navegación previa.
 **Implementación**: Similar a `apps.js`, asegurar visualización limpia.
 
-### 5. Drag & Drop (Arrastrar y Soltar)
+### 5. Drag & Drop (Arrastrar y Soltar) (IMPLEMENTADO)
 **Descripción**: Permitir reordenar marcadores y moverlos entre carpetas.
 **Beneficio**: Mejor organización visual.
 **Implementación**: Usar API HTML5 Drag and Drop o una librería ligera. Actualizar `chrome.bookmarks.move`.

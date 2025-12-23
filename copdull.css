@@ -528,3 +528,9 @@ main {
   border: 1px dashed #1a73e8 !important;
   border-radius: 4px;
 }
+
+.menu-separator {
+  height: 1px;
+  background: #e0e0e0;
+  margin: 4px 0;
+}
