@@ -20,6 +20,8 @@ export function initSearch() {
   // 2. Event Listener
   input.addEventListener('input', (e) => {
     const query = e.target.value.toLowerCase().trim()
+    const recentTopContainer = document.getElementById('recentTopList')
+    const cleanerContainer = document.getElementById('cleanerView')
 
     if (query.length === 0) {
       if (resultsContainer.style.display !== 'none') {
@@ -28,12 +30,20 @@ export function initSearch() {
           bookmarksContainer.style.display = 'block'
           // Small timeout to ensure display:block is applied before opacity transition
           requestAnimationFrame(() => {
-             fadeIn(bookmarksContainer)
+            fadeIn(bookmarksContainer)
           })
         })
       }
       return
     }
+    
+    // Ensure other views are hidden
+    [recentTopContainer, cleanerContainer].forEach(container => {
+      if (container && container.style.display !== 'none') {
+        container.style.display = 'none'
+        container.style.opacity = '0'
+      }
+    })
 
     // Filter
     const matches = allBookmarks.filter(item => 
@@ -52,15 +62,21 @@ export function initSearch() {
           fadeIn(resultsContainer)
         })
       })
+    } else if (resultsContainer.style.display === 'none') {
+      // If bookmarks was already hidden (e.g. from Dashboard view), just show results
+      resultsContainer.style.display = 'block'
+      requestAnimationFrame(() => {
+        fadeIn(resultsContainer)
+      })
     }
   })
 }
 
-function fadeIn(element) {
+export function fadeIn(element) {
   element.style.opacity = '1'
 }
 
-function fadeOut(element, callback) {
+export function fadeOut(element, callback) {
   element.style.opacity = '0'
   if (callback) {
     element.addEventListener('transitionend', function handler() {
@@ -70,7 +86,7 @@ function fadeOut(element, callback) {
   }
 }
 
-function flattenBookmarks(node, path) {
+export function flattenBookmarks(node, path) {
   let items = []
   
   // Skip root level titles usually, or handle nicely. 
@@ -128,11 +144,16 @@ function renderResults(matches, container) {
     
     const pathSpan = document.createElement('span')
     pathSpan.className = 'search-result-path'
-    pathSpan.textContent = item.path
+
+    const paths = item.path.split('>')
+    const parentPath = paths.slice(1, paths.length - 1).join(' > ')
+
+    pathSpan.textContent = parentPath
     
     div.appendChild(img)
     div.appendChild(a)
     div.appendChild(pathSpan)
+    // div.title = item.path
     
     // Make the whole row clickable
     div.addEventListener('click', () => {

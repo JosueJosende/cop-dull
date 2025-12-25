@@ -32,7 +32,7 @@ Este documento detalla el plan de trabajo para implementar las funcionalidades s
 
 ## Funcionalidades Sugeridas
 
-### 4. Gestor de Pestañas Recientes y Top Sites
+### 4. Gestor de Pestañas Recientes y Top Sites (IMPLEMENTADO)
 **Descripción**: Reactivar los módulos `recentTabs.js` y `topSites.js`.
 **Beneficio**: Acceso rápido a la navegación previa.
 **Implementación**: Similar a `apps.js`, asegurar visualización limpia.
@@ -51,7 +51,7 @@ Este documento detalla el plan de trabajo para implementar las funcionalidades s
 **Descripción**: Guardar preferencias (orden, temas) en la cuenta de Google.
 **Implementación**: Usar `chrome.storage.sync`.
 
-### 8. Limpieza de marcadores
+### 8. Limpieza de marcadores (IMPLEMENTADO)
 **Descripción**: Eliminar marcadores que se repiten, marcadores que no se usan y marcadores que no existen.
 **Beneficio**: Mejor organización visual.
 **Implementación**: Añadir un botón de "limpiar marcadores" y visualizar los marcadores que se van a eliminar, el usuario debe confirmar la eliminación.
@@ -61,7 +61,7 @@ Este documento detalla el plan de trabajo para implementar las funcionalidades s
 **Beneficio**: Mejor experiencia de usuario.
 **Implementación**: Añadir un botón de "volver atras" en vez de navegación "miga de pan" (breadcrumbs) en la cabecera de la tarjeta para volver atrás. Ejemplo: en la parte izquierda mostrar el nombre de la carpeta actual y un botón de "volver atras" en la parte derecha que permita volver a la carpeta anterior.
 
-### 10. Modificar y Eliminar Carpetas
+### 10. Modificar y Eliminar Carpetas (IMPLEMENTADO)
 **Descripción**: Gestión completa de carpetas desde la nueva pestaña.
 **Beneficio**: Mejor experiencia de usuario.
 **Implementación**:
@@ -87,6 +87,7 @@ Este documento detalla el plan de trabajo para implementar las funcionalidades s
 - [ ] Añadir animaciones de transición.
 - [ ] Mejorar el diseño de las tarjetas (feedback visual al hacer hover).
 - [x] Implementar Drag & Drop básico.
+- [x] Modificar y Eliminar Carpetas.
  
  ### Fase 4: Configuración
 - [ ] Panel de preferencias (toggle para mostrar/ocultar Apps, Recientes, etc.).

@@ -13,11 +13,21 @@
     </button>
     <div class="search-wrapper">
       <input type="search" id="searchInput" placeholder="Buscar..." autocomplete="off">
+      <button id="toggleRecentsBtn" class="header-btn" title="Recientes y Top Sites">
+        <!-- Icon like a clock or activity -->
+        Recents/Top
+      </button>
+      <button id="cleanerBtn" class="header-btn" title="Limpieza de marcadores" style="margin-left: 10px;">
+        Clean
+      </button>
     </div>
+
   </header>
 
   <main>
     <article class="page search-results" id="searchResults" style="display: none;"></article>
+    <article class="page recent-top" id="recentTopList" style="display: none;"></article>
+    <article class="page cleaner-view" id="cleanerView" style="display: none;"></article>
     <article class="page bookmarks" id="bookmarkList">
       
     </article>
@@ -25,6 +35,7 @@
 
   <!-- Context Menu -->
   <div id="contextMenu" class="context-menu" style="display: none;">
+    <div class="menu-item" id="menuClone">Clonar</div>
     <div class="menu-item" id="menuOpenNewTab">Abrir en pestaña nueva</div>
     <div class="menu-separator"></div>
     <div class="menu-item" id="menuEdit">Editar</div>

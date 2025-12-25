@@ -5,6 +5,8 @@ import { displayTopSites } from './modules/topSites.js'
 import { initSearch } from './modules/search.js'
 import { initContextMenu } from './modules/contextMenu.js'
 import { initDragDrop } from './modules/dragDrop.js'
+import { initDashboard } from './modules/dashboard.js'
+import { initCleaner } from './modules/cleaner.js'
 
 document.addEventListener('DOMContentLoaded', function () {
   // Recuperar bookmarks
@@ -16,6 +18,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
   initSearch()
   initContextMenu()
+  initDashboard()
+  initCleaner()
 
   // Recuperar aplicaciones instaladas
   /* chrome.management.getAll(function (apps) {
