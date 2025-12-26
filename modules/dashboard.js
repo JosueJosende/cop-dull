@@ -1,5 +1,6 @@
 
 import { fadeIn, fadeOut } from './search.js'
+import { getTranslation } from './settings.js'
 
 export function initDashboard() {
   const dashboardContainer = document.getElementById('recentTopList')
@@ -45,8 +46,8 @@ export function initDashboard() {
       if (addFolderBtn) addFolderBtn.style.display = 'none'
       
       // Identify what is currently visible to fade it out
-      const views = [bookmarkContainer, searchContainer, cleanerContainer]
-      const visibleView = views.find(v => v.style.display !== 'none' && v.style.opacity !== '0')
+      const views = [bookmarkContainer, searchContainer, cleanerContainer, document.getElementById('settingsView')]
+      const visibleView = views.find(v => v && v.style.display !== 'none' && v.style.opacity !== '0')
       
       const showDash = () => {
         renderDashboard(dashboardContainer)
@@ -57,6 +58,10 @@ export function initDashboard() {
         })
       }
 
+      // Hide Settings Button active state if was active
+      const settingsBtn = document.getElementById('settingsBtn')
+      if (settingsBtn) settingsBtn.style.background = ''
+
       if (visibleView) {
         fadeOut(visibleView, () => {
           visibleView.style.display = 'none'
@@ -66,10 +71,6 @@ export function initDashboard() {
         // If nothing is visible (maybe mid-transition state or initial), just show
         showDash()
       }
-      
-      //btn.style.background = 'rgba(0,0,0,0.1)'
-      // Ensure other buttons are reset (e.g. cleaner button style if we had one)
-      // For now cleaner button has no active style logic in dashboard, but cleaner has no active style.
     }
   })
 }
@@ -83,7 +84,7 @@ function renderDashboard(container) {
   topSection.innerHTML = `
     <div class="rt-header">
       <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="#1a73e8"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-      Top Sites
+      ${getTranslation('topSites')}
     </div>
     <div class="rt-list" id="topSitesList"></div>
   `
@@ -95,7 +96,7 @@ function renderDashboard(container) {
   recentSection.innerHTML = `
     <div class="rt-header">
       <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="#1a73e8"><path d="M13 3a9 9 0 0 0-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42C8.27 19.99 10.51 21 13 21c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/></svg>
-      Pestañas Recientes
+      ${getTranslation('recentTabs')}
     </div>
     <div class="rt-list" id="recentTabsList"></div>
   `

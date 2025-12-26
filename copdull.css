@@ -8,7 +8,6 @@ html, body {
   width: 100%;
   background: #e7e7e7;
   margin: 0;
-  height: 100%;
 }
 
 
@@ -240,7 +239,7 @@ main {
 
 /* Search Styles */
 .search-wrapper {
-  margin-top: -38px;
+  margin-top: 0px;
   height: 100%;
   display: flex;
   align-items: center;
@@ -264,11 +263,11 @@ main {
 #searchInput:focus {
   background: #fff;
   box-shadow: 0 1px 3px rgba(0,0,0,0.2);
-  border-color: #1a73e8;
+  /*border-color: #1a73e8;*/
 }
 
 .search-results {
-  width: 480px;
+  width: 680px;
   margin: 50px auto 20px auto;
   padding-bottom: 10px;
   
@@ -300,7 +299,7 @@ main {
   justify-content: start;
   align-items: center;
   padding: 3px 10px;
-  gap: 4px;
+  gap: 8px;
   transition: all 0.3s ease;
   font-size: 12px;
   width: 100%;
@@ -328,7 +327,7 @@ main {
   font-size: 12px;
   flex: 1;
   text-decoration: none;
-  
+  max-width: 420px;
   /* Match .card .link a truncation styles */
   overflow: hidden;
   white-space: nowrap;
@@ -342,7 +341,7 @@ main {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 150px;
+  max-width: 200px;
 }
 
 .fade-in {
@@ -363,7 +362,7 @@ main {
   border-radius: 4px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   border: 1px solid #dcdcdc;
-  min-width: 150px;
+  min-width: 200px;
   overflow: hidden;
   padding: 4px 0;
 }
@@ -488,12 +487,10 @@ main {
 }
 
 .btn-primary {
-  background: #1a73e8;
   color: white;
 }
 
 .btn-primary:hover {
-  background: #1557b0;
   box-shadow: 0 1px 2px rgba(0,0,0,0.2);
 }
 
@@ -568,14 +565,14 @@ main {
 
 .header-btn {
   top: 0;
-    height: 31px;
-    border-radius: 4px;
-    border: 1px solid #ccc;
-    background: #f1f3f4;
-    outline: none;
-    transition: all 0.2s;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-    padding: 0px 12px;
+  height: 31px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  background: #f1f3f4;
+  outline: none;
+  transition: all 0.2s;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  padding: 0px 12px;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -728,4 +725,136 @@ main {
   color: #888;
   font-style: italic;
   padding: 10px;
+}
+
+/* Settings View Styles */
+.settings-view {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 30px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  color: #3c4043;
+}
+
+.settings-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #f1f3f4;
+}
+
+.settings-header h2 {
+  font-size: 20px;
+  font-weight: 500;
+  margin: 0;
+}
+
+.settings-section {
+  margin-bottom: 30px;
+}
+
+.settings-section h3 {
+  font-size: 14px;
+  text-transform: uppercase;
+  color: #5f6368;
+  margin-bottom: 15px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.setting-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid #f8f9fa;
+}
+
+.setting-item:last-child {
+  border-bottom: none;
+}
+
+.setting-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.setting-label {
+  font-size: 15px;
+  color: #202124;
+}
+
+.setting-desc {
+  font-size: 12px;
+  color: #5f6368;
+}
+
+/* Toggle Switch */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 40px;
+  height: 24px;
+  flex-shrink: 0;
+}
+
+.switch input { 
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  transition: .4s;
+  border-radius: 24px;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: .4s;
+  border-radius: 50%;
+}
+
+input:checked + .slider {
+  /*background-color: #1a73e8;*/
+}
+
+input:focus + .slider {
+  /*box-shadow: 0 0 1px #1a73e8;*/
+}
+
+input:checked + .slider:before {
+  transform: translateX(16px);
+}
+
+.select-control {
+  padding: 6px 12px;
+  border: 1px solid #dadce0;
+  border-radius: 4px;
+  font-size: 14px;
+  color: #3c4043;
+  outline: none;
+  background: white;
+}
+
+.select-control:focus {
+  /*border-color: #1a73e8;*/
 }

@@ -1,3 +1,5 @@
+import { showConfirmModal, showInfoModal } from './modal.js'
+import { getTranslation } from './settings.js'
 
 export function initContextMenu() {
   const contextMenu = document.getElementById('contextMenu')
@@ -46,7 +48,7 @@ export function initContextMenu() {
         // Folder options
         menuClone.style.display = 'flex'
         menuOpenNewTab.style.display = 'none'
-        menuSeparator.style.display = 'block' // Keep block or flex? Original was block
+        menuSeparator.style.display = 'block'
       } else {
         // Bookmark options
         menuClone.style.display = 'none'
@@ -104,7 +106,7 @@ export function initContextMenu() {
 
     chrome.bookmarks.getSubTree(targetId, (results) => {
        if (chrome.runtime.lastError || !results || !results.length) {
-         alert('Error cloning folder')
+         showInfoModal('Error', 'Error cloning folder')
          return
        }
        const originalTree = results[0]
@@ -116,7 +118,6 @@ export function initContextMenu() {
        chrome.bookmarks.create({
          parentId: parentId,
          title: newTitle
-         // index: originalTree.index + 1 // Optional: place next to original
        }, (newFolder) => {
           if (chrome.runtime.lastError) {
              console.error(chrome.runtime.lastError)
@@ -127,7 +128,6 @@ export function initContextMenu() {
             copyFolders(originalTree.children, newFolder.id)
           }
           
-          // Ideally refresh view logic
           setTimeout(() => {
             window.location.reload()
           }, 200)
@@ -171,12 +171,10 @@ export function initContextMenu() {
 
     chrome.bookmarks.get(targetId, (results) => {
       if (chrome.runtime.lastError || !results || !results.length) {
-        alert('Error fetching bookmark')
+        showInfoModal('Error', 'Error fetching bookmark')
         return
       }
       const bookmark = results[0]
-      // targetIsFolder is already set correctly on contextmenu event
-      // but double check? bookmark.url is definitive.
       const isActuallyFolder = !bookmark.url
 
       editTitleInput.value = bookmark.title
@@ -184,7 +182,6 @@ export function initContextMenu() {
       if (isActuallyFolder) {
         // HIDE URL INPUT
         editUrlInput.style.display = 'none'
-        // Hide "URL" label (previous sibling)
         if(editUrlInput.previousElementSibling) editUrlInput.previousElementSibling.style.display = 'none'
         editUrlInput.value = '' 
       } else {
@@ -207,17 +204,17 @@ export function initContextMenu() {
     if (!targetId) return
 
     const msg = targetIsFolder 
-      ? '¿Estás seguro de que quieres eliminar esta carpeta y todo su contenido?' 
-      : '¿Estás seguro de que quieres eliminar este marcador?'
+      ? getTranslation('msgConfirmDelete') 
+      : getTranslation('msgConfirmDelete')
 
-    if (confirm(msg)) {
+    showConfirmModal(getTranslation('modalConfirmTitle'), msg, () => {
       const deleteAction = targetIsFolder 
         ? (id, cb) => chrome.bookmarks.removeTree(id, cb)
         : (id, cb) => chrome.bookmarks.remove(id, cb)
 
       deleteAction(targetId, () => {
          if (chrome.runtime.lastError) {
-           alert('Error removing item: ' + chrome.runtime.lastError.message)
+           showInfoModal('Error', 'Error removing item: ' + chrome.runtime.lastError.message)
            return
          }
          if (targetElement) targetElement.remove()
@@ -227,13 +224,10 @@ export function initContextMenu() {
 
          const searchItem = document.querySelector(`.search-result-item[data-id="${targetId}"]`)
          if (searchItem && searchItem !== targetElement) searchItem.remove()
-         
-         // If we deleted a folder we might be "inside" it or viewing it? 
-         // For now primitive removal is fine.
       })
-    }
+    })
   })
-
+  
   // --- Modal Handlers ---
 
   function closeEditModal() {
@@ -255,13 +249,13 @@ export function initContextMenu() {
     const isFolder = editModal.dataset.isFolder === 'true'
 
     if (!newTitle) {
-      alert('El título es obligatorio')
+      showInfoModal('Error', getTranslation('modalEditLabelTitle') + ' es obligatorio')
       return
     }
     
     // Only validate URL if it is NOT a folder
     if (!isFolder && !newUrl) {
-      alert('La URL es obligatoria para los marcadores')
+      showInfoModal('Error', 'URL es obligatoria')
       return
     }
 
@@ -270,12 +264,11 @@ export function initContextMenu() {
 
     chrome.bookmarks.update(targetId, updates, (updatedNode) => {
       if (chrome.runtime.lastError) {
-        alert('Error al actualizar: ' + chrome.runtime.lastError.message)
+        showInfoModal('Error', 'Error: ' + chrome.runtime.lastError.message)
         return
       }
       
       // Update DOM
-      // Find all representations (Grid/Masonry, Search)
       const elements = document.querySelectorAll(`[data-id="${targetId}"]`)
       elements.forEach(el => {
          if (isFolder) {
@@ -306,32 +299,23 @@ export function initContextMenu() {
   function showCardContextMenu(x, y, folderId) {
      // Hide other menus
      contextMenu.style.display = 'none'
-
-     // Determine the ACTUAL target folder ID based on navigation state
-     // The 'folderId' passed here is the ROOT card ID.
-     // But we might have navigated deep inside.
-     // We can check the card's current active folder state from DOM or dataset.
      
      const card = document.querySelector(`.card[data-id="${folderId}"]`)
      let activeFolderId = folderId
      
      if (card && card.dataset.currentId) {
-         // currentId is formatted like 'f123'. We need '123'.
          const currentIdRaw = card.dataset.currentId
          if (currentIdRaw.startsWith('f')) {
              activeFolderId = currentIdRaw.substring(1)
          }
      }
      
-     // Update the global target ID so actions apply to the ACTIVE folder
      cardTargetId = activeFolderId
      
-     // 1. Check content of folder to enable/disable "Open All"
      chrome.bookmarks.getChildren(activeFolderId, (children) => {
          const hasSubfolders = children.some(c => !c.url)
          const hasLinks = children.some(c => c.url)
          
-         // User req: "Si la carpeta en la que se encuentra, solo hay links (NO HAY SUBCARPETAS)"
          if (hasLinks && !hasSubfolders) {
              cardMenuOpenAll.style.display = 'flex'
          } else {
@@ -344,31 +328,20 @@ export function initContextMenu() {
      })
   }
 
-  // Hide on click
-  document.addEventListener('click', (e) => {
-    if (!cardContextMenu.contains(e.target)) {
-       cardContextMenu.style.display = 'none'
-    }
-  })
-  
   // --- Card Actions ---
   
-  // EDIT NAME (Reuse existing modal logic?)
   cardMenuEdit.addEventListener('click', () => {
       cardContextMenu.style.display = 'none'
       if (!cardTargetId) return
       
-      // Use existing edit logic but force folder mode
       targetId = cardTargetId
-      targetIsFolder = true // Cards represent folders
+      targetIsFolder = true 
       
-      // Manually trigger the edit setup
       chrome.bookmarks.get(targetId, (results) => {
           if (!results || !results.length) return
           const node = results[0]
           
           editTitleInput.value = node.title
-          // Hide URL stuff
           editUrlInput.style.display = 'none'
           if(editUrlInput.previousElementSibling) editUrlInput.previousElementSibling.style.display = 'none'
           editUrlInput.value = '' 
@@ -379,37 +352,20 @@ export function initContextMenu() {
       })
   })
   
-  // NEW FOLDER (Reuse AddFolder logic or similar)
   cardMenuNewFolder.addEventListener('click', () => {
       cardContextMenu.style.display = 'none'
       if (!cardTargetId) return
       
-      // Open "Add Folder" modal, pre-setting parent?
       const addFolderModal = document.getElementById('addFolderModal')
       const input = document.getElementById('newFolderTitle')
-      
-      // We need to hook into the creation logic to use THIS parent instead of default '1'.
-      // The `addFolder.js` module uses a hardcoded parent or assumes '1'.
-      // We should probably expose a way to set parent or just duplicate simple logic here?
-      // Duplicating simple logic is safer here to avoid cross-module coupling hacks quickly.
       
       input.value = ''
       addFolderModal.style.display = 'flex'
       input.focus()
       
-      // We need to override the "Create" button behavior or add a one-time listener.
-      // Standard `initAddFolder` adds a listener that always creates in '1'.
-      // We should probably MODIFY `initAddFolder` to accept context, or handle it here uniquely.
-      // Let's handle it here uniquely:
-      
-      const createBtn = document.getElementById('createFolderBtn')
-      
-      // Clone button to strip existing listeners to avoid double creation?
-      // Or just set a global "targetParentId" on the modal dataset?
       addFolderModal.dataset.parentId = cardTargetId
   })
   
-  // OPEN ALL
   cardMenuOpenAll.addEventListener('click', () => {
       cardContextMenu.style.display = 'none'
       if (!cardTargetId) return
@@ -426,20 +382,19 @@ export function initContextMenu() {
       cardContextMenu.style.display = 'none'
       if (!cardTargetId) return
       
-      if (confirm('ATENCIÓN: Se eliminará la carpeta y TODO su contenido (carpetas y archivos). ¿Estás seguro?')) {
+      const msg = 'ATENCIÓN: Se eliminará la carpeta y TODO su contenido (carpetas y archivos). ¿Estás seguro?' 
+      
+      showConfirmModal(getTranslation('modalConfirmTitle'), msg, () => {
           chrome.bookmarks.removeTree(cardTargetId, () => {
-              // DOM update: remove the card
               const card = document.querySelector(`.card[data-id="${cardTargetId}"]`)
               if (card) card.remove()
               
-              // Also refresh masonry layout if possible?
-              // window.location.reload() might be safest for heavy deletes.
               setTimeout(() => window.location.reload(), 200)
           })
-      }
+      })
   })
-
-  // Close modal on click outside content
+  
+  // Close modal on click outside
   editModal.addEventListener('click', (e) => {
     if (e.target === editModal) {
       closeEditModal()

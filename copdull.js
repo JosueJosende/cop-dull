@@ -8,6 +8,8 @@ import { initDragDrop } from './modules/dragDrop.js'
 import { initDashboard } from './modules/dashboard.js'
 import { initCleaner } from './modules/cleaner.js'
 import { initAddFolder } from './modules/addFolder.js'
+import { initSettings } from './modules/settings.js'
+import { initModals } from './modules/modal.js'
 
 document.addEventListener('DOMContentLoaded', function () {
   // Recuperar bookmarks
@@ -22,6 +24,8 @@ document.addEventListener('DOMContentLoaded', function () {
   initDashboard()
   initCleaner()
   initAddFolder()
+  initSettings()
+  initModals()
 
   // Recuperar aplicaciones instaladas
   /* chrome.management.getAll(function (apps) {

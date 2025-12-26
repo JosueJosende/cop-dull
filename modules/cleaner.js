@@ -1,4 +1,5 @@
 import { flattenBookmarks, fadeIn, fadeOut } from './search.js'
+import { getTranslation } from './settings.js'
 
 export function initCleaner() {
   const btn = document.getElementById('cleanerBtn')
@@ -15,12 +16,16 @@ export function initCleaner() {
 
   btn.addEventListener('click', () => {
     // Hide others
-    const views = [bookmarkContainer, searchContainer, dashboardContainer]
-    const visibleView = views.find(v => v.style.display !== 'none' && v.style.opacity !== '0')
+    const views = [bookmarkContainer, searchContainer, dashboardContainer, document.getElementById('settingsView')]
+    const visibleView = views.find(v => v && v.style.display !== 'none' && v.style.opacity !== '0')
 
     // Reset Dashboard Button State if it was active
     const dashboardBtn = document.getElementById('toggleRecentsBtn')
     if (dashboardBtn) dashboardBtn.style.background = ''
+
+    // Reset Settings Button State
+    const settingsBtn = document.getElementById('settingsBtn')
+    if (settingsBtn) settingsBtn.style.background = ''
 
     if (visibleView) {
       fadeOut(visibleView, () => {
@@ -63,37 +68,37 @@ export function initCleaner() {
 function renderCleanerStructure(container) {
   container.innerHTML = `
     <div class="cleaner-header">
-      <h2>Limpieza de Marcadores</h2>
+      <h2>${getTranslation('cleanerTitle')}</h2>
       <button class="close-btn" id="closeCleanerBtn">&times;</button>
     </div>
 
     <div class="cleaner-section">
-      <h3>Marcadores Duplicados (<span id="dupCount">0</span>)</h3>
+      <h3>${getTranslation('cleanerDuplicates')} (<span id="dupCount">0</span>)</h3>
       <div class="cleaner-list" id="dupList">
-        <div class="cleaner-empty">Analizando...</div>
+        <div class="cleaner-empty">${getTranslation('cleanerAnalysing')}</div>
       </div>
     </div>
 
     <div class="cleaner-section">
-      <h3>Carpetas Vacías (<span id="emptyCount">0</span>)</h3>
+      <h3>${getTranslation('cleanerEmptyFolders')} (<span id="emptyCount">0</span>)</h3>
       <div class="cleaner-list" id="emptyFolderList">
-        <div class="cleaner-empty">Analizando...</div>
+        <div class="cleaner-empty">${getTranslation('cleanerAnalysing')}</div>
       </div>
     </div>
 
     <div class="cleaner-section">
       <div style="display: flex; justify-content: space-between; align-items: center;">
-         <h3>Enlaces Rotos (<span id="brokenCount">0</span>)</h3>
-         <button id="scanBrokenBtn" class="btn btn-secondary" style="padding: 2px 8px; font-size: 11px;">Escanear</button>
+         <h3>${getTranslation('cleanerBrokenLinks')} (<span id="brokenCount">0</span>)</h3>
+         <button id="scanBrokenBtn" class="btn btn-secondary" style="padding: 2px 8px; font-size: 11px;">${getTranslation('cleanerScan')}</button>
       </div>
       <div style="font-size: 11px; color: #666; margin-bottom: 5px;" id="scanStatus"></div>
       <div class="cleaner-list" id="brokenList">
-        <div class="cleaner-empty">Presiona escanear para buscar enlaces rotos.</div>
+        <div class="cleaner-empty">${getTranslation('cleanerScanMsg')}</div>
       </div>
     </div>
 
     <div class="cleaner-actions">
-      <button id="cleanerDeleteBtn" class="btn btn-primary" disabled>Eliminar Seleccionados</button>
+      <button id="cleanerDeleteBtn" class="btn btn-primary" disabled>${getTranslation('cleanerDeleteSelected')}</button>
     </div>
   `
   
@@ -183,7 +188,7 @@ function renderDuplicates(duplicates) {
   container.innerHTML = ''
   
   if (duplicates.length === 0) {
-    container.innerHTML = '<div class="cleaner-empty">No se encontraron duplicados.</div>'
+    container.innerHTML = `<div class="cleaner-empty">${getTranslation('cleanerEmptyMsg')}</div>`
     return
   }
   
@@ -193,7 +198,7 @@ function renderDuplicates(duplicates) {
     header.style.padding = '5px'
     header.style.fontWeight = 'bold'
     header.style.fontSize = '12px'
-    header.style.background = '#fafafa'
+    header.style.background = '#fafafa28'
     header.textContent = group[0].url
     container.appendChild(header)
     
@@ -237,7 +242,7 @@ function renderEmptyFolders(folders) {
   container.innerHTML = ''
   
   if (folders.length === 0) {
-    container.innerHTML = '<div class="cleaner-empty">No se encontraron carpetas vacías.</div>'
+    container.innerHTML = `<div class="cleaner-empty">${getTranslation('cleanerEmptyMsg')}</div>`
     return
   }
   
@@ -274,38 +279,42 @@ function updateDeleteButtonState() {
   const checked = document.querySelectorAll('.cleaner-view input[type="checkbox"]:checked')
   const btn = document.getElementById('cleanerDeleteBtn')
   btn.disabled = checked.length === 0
+  const baseText = getTranslation('cleanerDeleteSelected')
   if (checked.length > 0) {
-    btn.textContent = `Eliminar Seleccionados (${checked.length})`
+    btn.textContent = `${baseText} (${checked.length})`
   } else {
-    btn.textContent = 'Eliminar Seleccionados'
+    btn.textContent = baseText
   }
 }
+
+import { showConfirmModal, showInfoModal } from './modal.js'
 
 function executeDelete() {
   const checked = document.querySelectorAll('.cleaner-view input[type="checkbox"]:checked')
   if (checked.length === 0) return
   
-  if (!confirm(`¿Estás seguro de que quieres eliminar ${checked.length} elementos permanentemente?`)) {
-    return
-  }
+  const msg = `${getTranslation('msgConfirmDelete')} (${checked.length})`
   
-  let processed = 0
-  
-  checked.forEach(input => {
-    const id = input.value
-    const type = input.dataset.type
-    
-    const removeFn = type === 'folder' 
-      ? chrome.bookmarks.removeTree 
-      : chrome.bookmarks.remove
+  showConfirmModal(getTranslation('modalConfirmTitle'), msg, () => {
+      let processed = 0
       
-    removeFn(id, () => {
-      processed++
-      if (processed === checked.length) {
-        alert('Limpieza completada.')
-        window.location.reload()
-      }
-    })
+      checked.forEach(input => {
+        const id = input.value
+        const type = input.dataset.type
+        
+        const removeFn = type === 'folder' 
+          ? chrome.bookmarks.removeTree 
+          : chrome.bookmarks.remove
+          
+        removeFn(id, () => {
+          processed++
+          if (processed === checked.length) {
+            showInfoModal(getTranslation('modalInfoTitle'), getTranslation('msgCleanerCompleted'), () => {
+                window.location.reload()
+            })
+          }
+        })
+      })
   })
 }
 
@@ -414,7 +423,7 @@ function renderBrokenLinks(items) {
   container.innerHTML = ''
   
   if (items.length === 0) {
-      container.innerHTML = '<div class="cleaner-empty">No se encontraron enlaces rotos.</div>'
+      container.innerHTML = `<div class="cleaner-empty">${getTranslation('cleanerEmptyMsg')}</div>`
       return
   }
   

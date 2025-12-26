@@ -90,7 +90,7 @@ Este documento detalla el plan de trabajo para implementar las funcionalidades s
 - [x] Modificar y Eliminar Carpetas.
  
  ### Fase 4: Configuración
-- [ ] Panel de preferencias (toggle para mostrar/ocultar Apps, Recientes, etc.).
-- [ ] Temas y Personalización.
+- [x] Panel de preferencias (toggle para mostrar/ocultar Apps, Recientes, etc.).
+- [x] Temas y Personalización (Tema Claro/Oscuro Implementado).
 - [ ] Sincronización de Configuración.
-- [ ] Internacionalización. (catalán, español, inglés)
+- [x] Internacionalización. (catalán, español, inglés)

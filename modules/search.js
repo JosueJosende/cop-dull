@@ -22,6 +22,7 @@ export function initSearch() {
     const query = e.target.value.toLowerCase().trim()
     const recentTopContainer = document.getElementById('recentTopList')
     const cleanerContainer = document.getElementById('cleanerView')
+    const settingsContainer = document.getElementById('settingsView')
     const addFolderBtn = document.getElementById('addFolderBtn')
 
     if (query.length === 0) {
@@ -45,12 +46,19 @@ export function initSearch() {
     if (addFolderBtn) addFolderBtn.style.display = 'none'
     
     // Ensure other views are hidden
-    [recentTopContainer, cleanerContainer].forEach(container => {
+    const viewsToHide = [recentTopContainer, cleanerContainer, settingsContainer]
+    
+    viewsToHide.forEach(container => {
+      // Check if container exists before checking style
       if (container && container.style.display !== 'none') {
         container.style.display = 'none'
         container.style.opacity = '0'
       }
     })
+    
+    // Also reset buttons active state if needed
+    const settingsBtn = document.getElementById('settingsBtn')
+    if (settingsBtn) settingsBtn.style.background = ''
 
     // Filter
     const matches = allBookmarks.filter(item => 
@@ -160,11 +168,13 @@ function renderResults(matches, container) {
     div.appendChild(img)
     div.appendChild(a)
     div.appendChild(pathSpan)
-    // div.title = item.path
     
     // Make the whole row clickable
-    div.addEventListener('click', () => {
-      window.location.href = item.url
+    div.addEventListener('click', (e) => {
+        // Avoid double click if clicking the link directly
+        if (e.target.tagName !== 'A') {
+            window.location.href = item.url
+        }
     })
     
     container.appendChild(div)
