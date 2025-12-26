@@ -21,6 +21,7 @@ export async function displayBookmarks(nodes) {
       cardElement.dataset.title = child.title
       cardElement.dataset.currentId = `f${child.id}`
       cardElement.dataset.id = child.id
+      cardElement.dataset.parentId = child.parentId
 
       // SVG for Back Button
       const backSvg = `<svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"></path></svg>`
@@ -63,6 +64,7 @@ const content = (fill, parentElement, isFolder) => {
       folder.classList.add(`f${fill.id}`) // Class to identify siblings
       folder.id = `f${node.id}`
       folder.dataset.id = node.id
+      folder.dataset.parentId = node.parentId
       folder.dataset.title = node.title
       folder.draggable = true
 
@@ -76,15 +78,10 @@ const content = (fill, parentElement, isFolder) => {
     } else {
       const link = document.createElement('div')
       link.dataset.id = node.id
+      link.dataset.parentId = node.parentId
       link.draggable = true
       link.classList.add('link')
       link.classList.add(parentElement.id.replace('c', 'f')) 
-      // If we are appending to a card, parentElement.id is cID. 
-      // But notice recursive call: content(child, cardElement, false). 
-      // parentElement is card. card.id is cID. 
-      // We want items to have class fID.
-      // So replace('c', 'f') works for root level.
-      // For deeper levels, parentElement is a folder with id fID. Replace does nothing.
       
       if (isFolder) link.style.display = 'none'
 

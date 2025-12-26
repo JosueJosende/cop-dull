@@ -7,7 +7,8 @@ const DEFAULT_CONFIG = {
   language: 'es',
   showRecentTop: true,
   showCleaner: true,
-  showApps: false // Although apps.js is off, we prep for it
+  showApps: false, // Although apps.js is off, we prep for it
+  enableSync: false
 }
 
 let currentConfig = { ...DEFAULT_CONFIG }
@@ -19,11 +20,14 @@ const I18N = {
     settingsTitle: 'Configuración',
     general: 'General',
     appearance: 'Apariencia',
+    syncSection: 'Sincronización',
     language: 'Idioma',
     showRecents: 'Mostrar Recientes / Top Sites',
     showRecentsDesc: 'Habilita el botón y la vista de sitios recientes en la cabecera.',
     showCleaner: 'Limpiador',
     showCleanerDesc: 'Habilita la herramienta de limpieza de marcadores.',
+    enableSync: 'Sincronizar configuración',
+    enableSyncDesc: 'Guardar preferencias en tu cuenta de Google.',
     theme: 'Tema',
     themeLight: 'Claro',
     themeDark: 'Oscuro',
@@ -87,11 +91,14 @@ const I18N = {
     settingsTitle: 'Settings',
     general: 'General',
     appearance: 'Appearance',
+    syncSection: 'Synchronization',
     language: 'Language',
     showRecents: 'Show Recents / Top Sites',
     showRecentsDesc: 'Enable the Recents button and view in the header.',
     showCleaner: 'Cleaner',
     showCleanerDesc: 'Enable the bookmark cleaner tool.',
+    enableSync: 'Sync Settings',
+    enableSyncDesc: 'Save preferences to your Google account.',
     theme: 'Theme',
     themeLight: 'Light',
     themeDark: 'Dark',
@@ -155,11 +162,14 @@ const I18N = {
     settingsTitle: 'Configuració',
     general: 'General',
     appearance: 'Aparença',
+    syncSection: 'Sincronització',
     language: 'Idioma',
     showRecents: 'Mostrar Recents / Top Sites',
     showRecentsDesc: 'Habilita el botó i la vista de llocs recents a la capçalera.',
     showCleaner: 'Netejador',
     showCleanerDesc: 'Habilita l\'eina de neteja de marcadors.',
+    enableSync: 'Sincronitzar configuració',
+    enableSyncDesc: 'Desar preferències al teu compte de Google.',
     theme: 'Tema',
     themeLight: 'Clar',
     themeDark: 'Fosc',
@@ -246,22 +256,11 @@ export function applyTranslations() {
   const searchInput = document.getElementById('searchInput')
   if (searchInput) searchInput.placeholder = t.searchPlaceholder
 
-  // Cleaner Headers (Dynamic elements might overwrite this, so cleaner needs to use getter)
-  // We will update static IDs if they exist
-  safeTextContent('dupCount', '0') // No, don't overwrite count
-  // We can't easily update cleaner partial texts if they are embedded with structure.
-  // Best approach: Re-render cleaner structure ON OPEN if language changed?
-  // Or update specific semantic IDs.
+  safeTextContent('dupCount', '0') 
   
-  // Update Cleaner Static Texts if View Rendered
   const cleanerHeader = document.querySelector('.cleaner-header h2')
   if (cleanerHeader) cleanerHeader.textContent = t.cleanerTitle
-  
-  // We can query specific headings if they don't have IDs by structure... risky.
-  // Ideally cleaner.js should pull from a global config/lang provider.
-  // For now, let's update what we can target by ID or specific attribute.
 
-  // Modals
   safeTextContentSelector('#editModal .modal-header h3', t.modalEditTitle)
   safeTextContentSelector('label[for="editTitle"]', t.modalEditLabelTitle)
   safeTextContentSelector('label[for="editUrl"]', t.modalEditLabelUrl)
@@ -273,9 +272,6 @@ export function applyTranslations() {
   safeTextContent('createFolderBtn', t.modalCreate)
   safeTextContent('cancelAddFolder', t.modalCancel2)
   
-  // Context Menus
-  // We need to preserve SVGs inside... `textContent` kills children. 
-  // We should update the TEXT NODE only.
   updateTextNode('menuClone', t.ctxClone)
   updateTextNode('menuOpenNewTab', t.ctxOpenTab)
   updateTextNode('menuEdit', t.ctxEdit)
@@ -285,16 +281,12 @@ export function applyTranslations() {
   updateTextNode('cardMenuNewFolder', t.ctxNewFolder)
   updateTextNode('cardMenuOpenAll', t.ctxOpenAll)
   updateTextNode('cardMenuDelete', t.ctxDelFolder)
-  
-  // Settings View (if open, it re-renders on open/change, so fine)
 }
 
-// Helper to update text but keep SVG icons
 function updateTextNode(id, newText) {
   const el = document.getElementById(id)
   if (!el) return
   
-  // Find text node
   let textNode = null
   for (let node of el.childNodes) {
     if (node.nodeType === Node.TEXT_NODE && node.textContent.trim().length > 0) {
@@ -304,11 +296,8 @@ function updateTextNode(id, newText) {
   }
   
   if (textNode) {
-    textNode.textContent = newText.startsWith(' ') ? newText : ' ' + newText // Keep spacing
+    textNode.textContent = newText.startsWith(' ') ? newText : ' ' + newText
   } else {
-    // If no text node found (maybe purely icon initially?), append one?
-    // Current HTML has text.
-    // If we can't find it, we might be appending.
     el.appendChild(document.createTextNode(' ' + newText))
   }
 }
@@ -328,7 +317,6 @@ function safeTitle(id, text) {
   if (el) el.title = text
 }
 
-// Expose T for other modules if needed
 export function getTranslation(key) {
   const t = I18N[currentConfig.language] || I18N.es
   return t[key] || key
@@ -338,19 +326,15 @@ export function initSettings() {
   const btn = document.getElementById('settingsBtn')
   const container = document.getElementById('settingsView')
   
-  // Set initial transition style
   container.style.opacity = '0'
   container.style.transition = 'opacity 0.2s ease-in-out'
 
-  // Load config on startup
   loadConfig().then(() => {
     applyConfig()
-    applyTranslations() // Initial translation
+    applyTranslations()
   })
 
-  // Toggle View Logic
   btn.addEventListener('click', () => {
-    // Check purely by display property for robust toggle
     const isShowing = container.style.display !== 'none'
     
     if (isShowing) {
@@ -369,11 +353,9 @@ function openSettings() {
   const dashboardContainer = document.getElementById('recentTopList')
   const btn = document.getElementById('settingsBtn')
   
-  // Identify Visible View
   const views = [bookmarkContainer, searchContainer, cleanerContainer, dashboardContainer]
   const visibleView = views.find(v => v.style.display !== 'none' && v.style.opacity !== '0')
 
-  // Render UI before showing
   renderSettingsUI()
   
   if (visibleView) {
@@ -389,14 +371,11 @@ function openSettings() {
     requestAnimationFrame(() => fadeIn(container))
   }
   
-  // Update button state if needed (active background)
   btn.style.background = 'rgba(0,0,0,0.1)'
   
-  // Reset other buttons
   const recentsBtn = document.getElementById('toggleRecentsBtn')
   if (recentsBtn) recentsBtn.style.background = ''
   
-  // Also hide +Folder button in Settings view? Yes
   const addFolderBtn = document.getElementById('addFolderBtn')
   if (addFolderBtn) addFolderBtn.style.display = 'none'
 }
@@ -410,9 +389,10 @@ export function closeSettings() {
   fadeOut(container, () => {
     container.style.display = 'none'
     bookmarkContainer.style.display = 'block'
-    requestAnimationFrame(() => fadeIn(bookmarkContainer))
+    requestAnimationFrame(() => fadeIn(container)) // This was weird in older code maybe? fadeIn(bookmarkContainer)
     
-    // Show add folder btn again
+    requestAnimationFrame(() => fadeIn(bookmarkContainer))
+
     if (addFolderBtn) addFolderBtn.style.display = 'flex'
   })
   
@@ -457,6 +437,20 @@ function renderSettingsUI() {
     </div>
 
     <div class="settings-section">
+      <h3>${t.syncSection}</h3>
+      <div class="setting-item">
+        <div class="setting-info">
+          <span class="setting-label">${t.enableSync}</span>
+          <span class="setting-desc">${t.enableSyncDesc}</span>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="toggleSyncSetting" ${currentConfig.enableSync ? 'checked' : ''}>
+          <span class="slider"></span>
+        </label>
+      </div>
+    </div>
+
+    <div class="settings-section">
       <h3>${t.appearance}</h3>
       
       <div class="setting-item">
@@ -496,6 +490,10 @@ function renderSettingsUI() {
   document.getElementById('toggleCleanerSetting').addEventListener('change', (e) => {
     updateConfig('showCleaner', e.target.checked)
   })
+
+  document.getElementById('toggleSyncSetting').addEventListener('change', (e) => {
+    updateConfig('enableSync', e.target.checked)
+  })
   
   document.getElementById('themeSelect').addEventListener('change', (e) => {
     updateConfig('theme', e.target.value)
@@ -503,7 +501,6 @@ function renderSettingsUI() {
   
   document.getElementById('langSelect').addEventListener('change', (e) => {
     updateConfig('language', e.target.value)
-    // Re-render immediately to show language change
     renderSettingsUI()
     applyTranslations()
   })
@@ -516,27 +513,46 @@ function updateConfig(key, value) {
 }
 
 function saveConfig() {
-  if (chrome && chrome.storage && chrome.storage.sync) {
+  // Always save to local to keep 'enableSync' preference persistent locally
+  localStorage.setItem('copdullConfig', JSON.stringify(currentConfig))
+
+  // If sync is enabled, also save to cloud
+  if (currentConfig.enableSync && chrome && chrome.storage && chrome.storage.sync) {
     chrome.storage.sync.set({ copdullConfig: currentConfig })
-  } else {
-    localStorage.setItem('copdullConfig', JSON.stringify(currentConfig))
   }
 }
 
 function loadConfig() {
   return new Promise((resolve) => {
-    if (chrome && chrome.storage && chrome.storage.sync) {
+    // 1. Load Local
+    const stored = localStorage.getItem('copdullConfig')
+    let localConfig = {}
+    
+    if (stored) {
+      localConfig = JSON.parse(stored)
+    }
+
+    // Default 'enableSync' is true in DEFAULT_CONFIG, but let's check local override
+    // If never saved, it uses default.
+    const mergedLocal = { ...DEFAULT_CONFIG, ...localConfig }
+    
+    // 2. Check Sync if enabled
+    if (mergedLocal.enableSync && chrome && chrome.storage && chrome.storage.sync) {
       chrome.storage.sync.get(['copdullConfig'], (result) => {
         if (result.copdullConfig) {
-          currentConfig = { ...DEFAULT_CONFIG, ...result.copdullConfig }
+          // Merge: Default < Local < Sync (Sync wins if enabled?)
+          // actually if user enabled sync, we trust sync data.
+          // BUT if sync is empty (first time), we might want to push local?
+          // For now simplest: Sync overwrites Local if present.
+          currentConfig = { ...mergedLocal, ...result.copdullConfig }
+        } else {
+          // First time syncing or empty
+          currentConfig = mergedLocal
         }
         resolve()
       })
     } else {
-      const stored = localStorage.getItem('copdullConfig')
-      if (stored) {
-        currentConfig = { ...DEFAULT_CONFIG, ...JSON.parse(stored) }
-      }
+      currentConfig = mergedLocal
       resolve()
     }
   })
@@ -555,7 +571,6 @@ function applyConfig() {
   }
   
   // Apply Theme
-  // Simple Theme Logic: toggle a class on body
   document.body.classList.remove('theme-dark', 'theme-light')
   document.body.classList.add(`theme-${currentConfig.theme}`)
   
@@ -566,16 +581,15 @@ function applyConfig() {
   }
 }
 
-// Minimal Dark Theme Injection (Better done via CSS variables usually, but injecting for now)
+// Minimal Dark Theme Injection
 function applyDarkTheme() {
-    // Check if stylesheet exists
     let style = document.getElementById('dark-theme-style')
     if (!style) {
         style = document.createElement('style')
         style.id = 'dark-theme-style'
         style.textContent = `
-          body.theme-dark { background-color: #202124; color: #e8eaed; }
-          body.theme-dark header { background-color: #202124; border-color: #3f4042; mask-image: none; }
+          body.theme-dark { background: #202124; color: #e8eaed; }
+          body.theme-dark header { background: #202124; border-color: #3f4042; }
           
           /* Cards */
           body.theme-dark .card { background-image: none;background-color: #292a2d; color: #e8eaed; border-color: #3f4042; box-shadow: none; }
@@ -595,7 +609,7 @@ function applyDarkTheme() {
           body.theme-dark .link a:hover { color: #8ab4f8; }
           
           /* SVGs */
-          body.theme-dark svg { fill: #9aa0a6; stroke: #9aa0a6; }
+          body.theme-dark svg { stroke: #9aa0a6; }
           body.theme-dark #searchInput { background-color: #202124; color: #e8eaed; border-color: #3f4042; outline: none; box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1); }
           body.theme-dark .header-btn { background-color: #202124; color: #e8eaed; border-color: #3f4042; outline: none; box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1); }
           body.theme-dark .header-btn svg { stroke: #9aa0a6; fill: none; }
@@ -619,6 +633,7 @@ function applyDarkTheme() {
           body.theme-dark .select-control, body.theme-dark .form-control { background-color: #35363a; color: #e8eaed; border-color: #5f6368; }
           body.theme-dark .modal { background: #292a2d; color: #e8eaed; border: 1px solid #5f6368; }
           body.theme-dark .modal-header { border-bottom-color: #3f4042; }
+          body.theme-dark .modal-footer { background: #292a2d; border-top-color: #3f4042; }
           body.theme-dark .context-menu { background: #292a2d; border-color: #5f6368; }
           body.theme-dark .menu-item { color: #e8eaed; }
           body.theme-dark .menu-item:hover { background: #35363a; }

@@ -42,12 +42,12 @@ Este documento detalla el plan de trabajo para implementar las funcionalidades s
 **Beneficio**: Mejor organización visual.
 **Implementación**: Usar API HTML5 Drag and Drop o una librería ligera. Actualizar `chrome.bookmarks.move`.
 
-### 6. Temas y Personalización
+### 6. Temas y Personalización (IMPLEMENTADO)
 **Descripción**: Modo Claro/Oscuro y colores de acento.
 **Beneficio**: Mejor experiencia de usuario.
 **Implementación**: Variables CSS y persistencia en `localStorage` o `chrome.storage`.
 
-### 7. Sincronización de Configuración
+### 7. Sincronización de Configuración (IMPLEMENTADO)
 **Descripción**: Guardar preferencias (orden, temas) en la cuenta de Google.
 **Implementación**: Usar `chrome.storage.sync`.
 
@@ -90,7 +90,6 @@ Este documento detalla el plan de trabajo para implementar las funcionalidades s
 - [x] Modificar y Eliminar Carpetas.
  
  ### Fase 4: Configuración
-- [x] Panel de preferencias (toggle para mostrar/ocultar Apps, Recientes, etc.).
 - [x] Temas y Personalización (Tema Claro/Oscuro Implementado).
-- [ ] Sincronización de Configuración.
+- [x] Sincronización de Configuración.
 - [x] Internacionalización. (catalán, español, inglés)

@@ -1,13 +1,13 @@
-
 import { reloadMasonry } from './masonry.js'
 
 export function initDragDrop() {
   const container = document.getElementById('bookmarkList')
   let dragSource = null
   let dragSourceId = null
-  let dragType = null // 'link' or 'folder'
   let placeholder = document.createElement('div')
   placeholder.className = 'drop-placeholder'
+
+  let masonryTimeout = null
 
   // Delegated listeners
   container.addEventListener('dragstart', handleDragStart)
@@ -17,26 +17,23 @@ export function initDragDrop() {
   container.addEventListener('dragend', handleDragEnd)
 
   function handleDragStart(e) {
-    const target = e.target.closest('.link, .folder')
+    const target = e.target.closest('.link, .folder, .card')
     if (!target) return
 
     dragSource = target
     dragSourceId = target.dataset.id
-    dragType = target.classList.contains('folder') ? 'folder' : 'link'
     
-    // Set data
     e.dataTransfer.effectAllowed = 'move'
     e.dataTransfer.setData('text/plain', dragSourceId)
-    e.dataTransfer.setData('type', dragType)
 
     // Visuals
-    setTimeout(() => {
+    requestAnimationFrame(() => {
       target.classList.add('dragging')
-    }, 0)
+    })
   }
 
   function handleDragOver(e) {
-    e.preventDefault() // Necessary to allow drop
+    e.preventDefault() 
     e.dataTransfer.dropEffect = 'move'
 
     const target = e.target.closest('.link, .folder, .card')
@@ -47,44 +44,67 @@ export function initDragDrop() {
       return
     }
 
-    // Logic for placeholder vs "dropping into folder"
-    // If target is a folder and different from source, we might want to drop *inside*
-    // Or if we are hovering the edges, we might want to reorder *around* it.
-    
-    // Check if target is a folder we can drop into
+    // Logic for placeholder vs "dropping into folder/card"
     const isFolder = target.classList.contains('folder')
+    const isCard = target.classList.contains('card')
     
+    // We can drop into a Card (append to root of folder) OR a Folder (subfolder)
+    // Only if dragging a Link/Folder (not Card over Card, usually)
+    // But allowing Card reorder is good.
+
     const rect = target.getBoundingClientRect()
     const relativeY = e.clientY - rect.top
     const height = rect.height
     
-    // Thresholds for reordering vs dropping inside (25% top/bottom for reorder)
+    // Thresholds: if hovering middle of a FOLDER/CARD, maybe drop INSIDE?
+    // For bookmarks, we always reorder.
+    // For folders, we might reorder (top/bottom edge) or drop inside (middle).
+    
     const edgeThreshold = 0.25
     
     // Reset previous folder highlights
     document.querySelectorAll('.drop-target-folder').forEach(el => el.classList.remove('drop-target-folder'))
 
-    if (isFolder && relativeY > height * edgeThreshold && relativeY < height * (1 - edgeThreshold)) {
-      // Hovering Middle of Folder -> Drop Inside
-      if (placeholder.parentNode) placeholder.parentNode.removeChild(placeholder)
-      target.classList.add('drop-target-folder')
-      return;
-    } 
-
-    if (target.classList.contains('card')) {
-       return
+    // DROP INTO FOLDER LOGIC
+    // Allow dropping link/folder INTO another folder/card.
+    // Cannot drop Card into Card (usually).
+    const draggingCard = dragSource.classList.contains('card')
+    
+    if (!draggingCard && (isFolder || isCard)) {
+       // If hovering middle -> Drop Inside
+       if (relativeY > height * edgeThreshold && relativeY < height * (1 - edgeThreshold)) {
+          if (placeholder.parentNode) placeholder.parentNode.removeChild(placeholder)
+          target.classList.add('drop-target-folder')
+          return
+       }
     }
 
+    // REORDER LOGIC
+    // If dragging Card, only reorder against Cards.
+    // If dragging Link/Folder, only reorder against Link/Folder.
+    
+    if (draggingCard && !isCard) return // Can't reorder Card against a Link
+    if (!draggingCard && isCard) return // Can't reorder Link against a Card (visual hierarchy mismatch)
+    
     // Insert PlaceHolder
     if (relativeY < height / 2) {
       target.parentNode.insertBefore(placeholder, target)
     } else {
       target.parentNode.insertBefore(placeholder, target.nextSibling)
     }
+
+    // Throttle Masonry Layout for smoother experience
+    // Only needed if dragging causes layout shift (e.g. Card dragging, or adding placeholder changes height)
+    if (!masonryTimeout) {
+        masonryTimeout = setTimeout(() => {
+            reloadMasonry()
+            masonryTimeout = null
+        }, 100)
+    }
   }
 
   function handleDragLeave(e) {
-     const target = e.target.closest('.folder')
+     const target = e.target.closest('.folder, .card')
      if (target) {
        target.classList.remove('drop-target-folder')
      }
@@ -95,41 +115,61 @@ export function initDragDrop() {
     
     const dropTargetFolder = document.querySelector('.drop-target-folder')
     
+    // DROP INTO FOLDER
     if (dropTargetFolder) {
-      // Dropped INTO a folder
+      // Use dataset.id for Folders, but for Cards we need the FOLDER ID it represents.
+      // Cards have dataset.id (which is the folder ID).
       const parentId = dropTargetFolder.dataset.id
       
-      // Optimistic Update: Remove from current view as it goes into another folder
       if (dragSource) dragSource.remove()
-      
-      moveBookmark(dragSourceId, parentId)
-    } else if (placeholder.parentNode) {
-      // Reordered
+      moveBookmark(dragSourceId, parentId) // Appends to end
+    } 
+    // REORDER
+    else if (placeholder.parentNode) {
       const parentContainer = placeholder.parentNode
       let parentId = null
       
-      // Determine new parent ID based on DOM structure
+      // Determine Parent ID correct logic
       if (parentContainer.classList.contains('folder')) {
          parentId = parentContainer.dataset.id
-      } else if (parentContainer.classList.contains('card') || parentContainer.closest('.card')) {
-         const card = parentContainer.closest('.card')
-         const currentIdStr = card.dataset.currentId // e.g. "f123"
-         parentId = currentIdStr.substring(1) // "123"
+      } else if (parentContainer.classList.contains('card')) {
+          parentId = parentContainer.dataset.id
+      } else if (parentContainer.id === 'bookmarkList') {
+         if (dragSource && dragSource.dataset.parentId) {
+             parentId = dragSource.dataset.parentId
+         } else {
+             parentId = '1'
+         }
       }
 
-      // Calculate new index based on placeholder position
-      // Count valid siblings before placeholder, EXCLUDING the item being dragged (if it's a sibling)
+      // Calculate Index
       let newIndex = 0
+      let isMovingDown = false
       const siblings = Array.from(parentContainer.children)
+      
       for (const child of siblings) {
         if (child === placeholder) break
-        // Skip dragSource in count to simulates "remove then insert" behavior
-        if (child !== dragSource && (child.classList.contains('link') || child.classList.contains('folder'))) {
-           newIndex++
+        if (child === dragSource) isMovingDown = true
+        
+        if (child !== dragSource && 
+           (child.classList.contains('link') || 
+            child.classList.contains('folder') || 
+            child.classList.contains('card'))) {
+           
+           if (child.style.display !== 'none' || child.classList.contains('card')) { 
+               newIndex++
+           }
         }
       }
       
-      // Optimistic Update: Move dragSource to placeholder position
+      const sourceParentId = dragSource ? dragSource.dataset.parentId : null
+      // Strict equality check might fail if types differ (string vs int in dataset if manual/api mismatch)
+      // Usually dataset is string. API returns strings.
+      if (sourceParentId == parentId && isMovingDown) {
+          newIndex++
+      }
+      
+      // Optimistic Update
       parentContainer.insertBefore(dragSource, placeholder)
       
       moveBookmark(dragSourceId, parentId, newIndex)
@@ -137,7 +177,6 @@ export function initDragDrop() {
 
     cleanup()
     
-    // Refresh Layout
     setTimeout(() => {
         reloadMasonry()
     }, 50)
@@ -153,6 +192,7 @@ export function initDragDrop() {
     document.querySelectorAll('.drop-target-folder').forEach(el => el.classList.remove('drop-target-folder'))
     dragSource = null
     dragSourceId = null
+    if (masonryTimeout) clearTimeout(masonryTimeout)
   }
 
   function moveBookmark(id, parentId, index) {
@@ -166,13 +206,8 @@ export function initDragDrop() {
     chrome.bookmarks.move(id, destination, (result) => {
        if (chrome.runtime.lastError) {
          console.error(chrome.runtime.lastError.message)
-         alert('Error moving bookmark')
-         // In a real app we might want to revert the optimistic update here on failure
-         // For now, reload to sync state if error occurs
-         window.location.reload()
-         return
+         // window.location.reload() // Or show error
        }
-       // Success - DOM already updated optimistically
     })
   }
 }
