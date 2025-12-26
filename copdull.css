@@ -374,6 +374,14 @@ main {
   font-size: 13px;
   color: #333;
   transition: background 0.1s;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+
+  & svg {
+    width: 20px;
+    height: 20px;
+  }
 }
 
 .menu-item:hover {

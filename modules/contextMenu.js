@@ -34,7 +34,7 @@ export function initContextMenu() {
       // Toggle Options based on type
       if (targetIsFolder) {
         // Folder options
-        menuClone.style.display = 'block'
+        menuClone.style.display = 'flex'
         menuOpenNewTab.style.display = 'none'
         // Reset separator if needed, but here we want separator after Clone effectively if we want separation from Edit
         // Original layout: Clone, OpenNewTab, Sep, Edit...
@@ -43,8 +43,8 @@ export function initContextMenu() {
       } else {
         // Bookmark options
         menuClone.style.display = 'none'
-        menuOpenNewTab.style.display = 'block'
-        menuSeparator.style.display = 'block'
+        menuOpenNewTab.style.display = 'flex'
+        menuSeparator.style.display = 'flex'
       }
 
       // Position menu
@@ -341,7 +341,7 @@ export function initContextMenu() {
          
          // User req: "Si la carpeta en la que se encuentra, solo hay links (NO HAY SUBCARPETAS)"
          if (hasLinks && !hasSubfolders) {
-             cardMenuOpenAll.style.display = 'block'
+             cardMenuOpenAll.style.display = 'flex'
          } else {
              cardMenuOpenAll.style.display = 'none'
          }
