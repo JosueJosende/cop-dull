@@ -12,6 +12,8 @@ export function initDashboard() {
   // Set initial transition style for dashboard
   dashboardContainer.style.opacity = '0'
   dashboardContainer.style.transition = 'opacity 0.2s ease-in-out'
+  
+  const addFolderBtn = document.getElementById('addFolderBtn')
 
   btn.addEventListener('click', () => {
     // Check if we are currently showing dashboard
@@ -25,15 +27,22 @@ export function initDashboard() {
           if (searchInput.value.trim() !== '') {
             searchContainer.style.display = 'block'
             requestAnimationFrame(() => fadeIn(searchContainer))
+            // Search is active, keep button hidden
+            if (addFolderBtn) addFolderBtn.style.display = 'none' 
         } else {
             bookmarkContainer.style.display = 'block'
             requestAnimationFrame(() => fadeIn(bookmarkContainer))
+            // Main view, show button
+            if (addFolderBtn) addFolderBtn.style.display = 'flex'
           }
       })
       
       btn.style.background = ''
     } else {
       // SHOW DASHBOARD
+      
+      // Hide Folder Button
+      if (addFolderBtn) addFolderBtn.style.display = 'none'
       
       // Identify what is currently visible to fade it out
       const views = [bookmarkContainer, searchContainer, cleanerContainer]

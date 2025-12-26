@@ -22,20 +22,27 @@ export function initSearch() {
     const query = e.target.value.toLowerCase().trim()
     const recentTopContainer = document.getElementById('recentTopList')
     const cleanerContainer = document.getElementById('cleanerView')
+    const addFolderBtn = document.getElementById('addFolderBtn')
 
     if (query.length === 0) {
       if (resultsContainer.style.display !== 'none') {
         fadeOut(resultsContainer, () => {
           resultsContainer.style.display = 'none'
           bookmarksContainer.style.display = 'block'
+          if (addFolderBtn) addFolderBtn.style.display = 'flex'
           // Small timeout to ensure display:block is applied before opacity transition
           requestAnimationFrame(() => {
             fadeIn(bookmarksContainer)
           })
         })
+      } else {
+         if (addFolderBtn) addFolderBtn.style.display = 'flex'
       }
       return
     }
+    
+    // Hide Add Folder Btn
+    if (addFolderBtn) addFolderBtn.style.display = 'none'
     
     // Ensure other views are hidden
     [recentTopContainer, cleanerContainer].forEach(container => {

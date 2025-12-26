@@ -35,12 +35,24 @@ a:hover {
 }
 
 header {
+  position: fixed;
+  top: 0;
   cursor: default;
   z-index: 2;
-  height: 62px;
+  height: 100px;
   width: 100%;
   border-top: 2px solid #2C3E50;
+  background: #e7e7e7f0;
+  mask-image: linear-gradient(#e7e7e7 70%, transparent);
 }
+header::after {
+  content: "";
+}
+
+header::before {
+  content: "";
+}
+
 header button {
   background-color: #2C3E50;
   height: 38px;
@@ -62,13 +74,14 @@ header button svg {
 }
 
 main {
-  margin: 30px 0 20px 0;
+  margin: 100px 0 20px 0;
   height: 100%;
 }
 
 .bookmarks {
   position: relative;
   margin: 0 auto;
+  height: 100%;
 }
 
 .card {
@@ -108,8 +121,8 @@ main {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 20px;
-  height: 20px;
+  width: 16px;
+  height: 16px;
   border-radius: 50%;
   transition: background 0.2s;
 }
@@ -119,8 +132,8 @@ main {
 }
 
 .card .back-button svg {
-  width: 14px;
-  height: 14px;
+  width: 12px;
+  height: 12px;
   fill: #757575;
 }
 
@@ -227,7 +240,7 @@ main {
 
 /* Search Styles */
 .search-wrapper {
-  margin-top: -26px;
+  margin-top: -38px;
   height: 100%;
   display: flex;
   align-items: center;

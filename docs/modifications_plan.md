@@ -57,7 +57,7 @@ Este documento detalla el plan de trabajo para implementar las funcionalidades s
 **Implementación**: Añadir un botón de "limpiar marcadores" y visualizar los marcadores que se van a eliminar, el usuario debe confirmar la eliminación.
 
 ### 9. Mejorar navegación por carpetas (IMPLEMENTADO)
-**Descripción**: Permitir navegar por carpetas de manera más intuitiva.
+**Descripción**: Menu contextual en tarjetas para abrir todo, editar, eliminar y crear carpetas.
 **Beneficio**: Mejor experiencia de usuario.
 **Implementación**: Añadir un botón de "volver atras" en vez de navegación "miga de pan" (breadcrumbs) en la cabecera de la tarjeta para volver atrás. Ejemplo: en la parte izquierda mostrar el nombre de la carpeta actual y un botón de "volver atras" en la parte derecha que permita volver a la carpeta anterior.
 

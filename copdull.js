@@ -7,6 +7,7 @@ import { initContextMenu } from './modules/contextMenu.js'
 import { initDragDrop } from './modules/dragDrop.js'
 import { initDashboard } from './modules/dashboard.js'
 import { initCleaner } from './modules/cleaner.js'
+import { initAddFolder } from './modules/addFolder.js'
 
 document.addEventListener('DOMContentLoaded', function () {
   // Recuperar bookmarks
@@ -20,6 +21,7 @@ document.addEventListener('DOMContentLoaded', function () {
   initContextMenu()
   initDashboard()
   initCleaner()
+  initAddFolder()
 
   // Recuperar aplicaciones instaladas
   /* chrome.management.getAll(function (apps) {
