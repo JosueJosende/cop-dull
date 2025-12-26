@@ -222,7 +222,11 @@ function renderDuplicates(duplicates) {
       
       const path = document.createElement('span')
       path.className = 'path'
-      path.textContent = item.path
+
+      const paths = item.path.split('>')
+      const parentPath = paths.slice(1, paths.length - 1).join(' > ')
+      
+      path.textContent = parentPath
       
       div.appendChild(checkbox)
       div.appendChild(img)

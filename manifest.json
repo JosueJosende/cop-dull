@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Cop d'ull",
+  "name": "CopDull",
   "version": "1.0",
-  "description": "Extensió per a Chrome que permet tenir tots els marcadors al obrir una nova pàgina.",
+  "description": "Extension for Chrome that allows you to have all bookmarks open when opening a new page.",
   "permissions": [
     "tabs",
     "bookmarks",
