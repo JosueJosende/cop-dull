@@ -76,7 +76,7 @@ Este documento detalla el plan de trabajo para implementar las funcionalidades s
 
 ### Fase 1: Reactivación y Limpieza
 - [ ] Reactivar `apps.js` y mostrar aplicaciones.
-- [ ] Reactivar `recentTabs.js` (opcional, evaluar impacto visual).
+- [x] Reactivar `recentTabs.js` (opcional, evaluar impacto visual).
 - [ ] Limpiar y unificar estilos CSS.
 
 ### Fase 2: Funcionalidades Core (User Requests)
@@ -84,11 +84,13 @@ Este documento detalla el plan de trabajo para implementar las funcionalidades s
 - [x] Implementar Editar/Eliminar Marcadores (UI + Lógica).
 
 ### Fase 3: Experiencia de Usuario
-- [ ] Añadir animaciones de transición.
-- [ ] Mejorar el diseño de las tarjetas (feedback visual al hacer hover).
+- [x] Añadir animaciones de transición.
+- [x] Mejorar el diseño de las tarjetas (feedback visual al hacer hover).
 - [x] Implementar Drag & Drop básico.
 - [x] Modificar y Eliminar Carpetas.
  
  ### Fase 4: Configuración
 - [ ] Panel de preferencias (toggle para mostrar/ocultar Apps, Recientes, etc.).
-- [ ] Selección de Tema.
+- [ ] Temas y Personalización.
+- [ ] Sincronización de Configuración.
+- [ ] Internacionalización. (catalán, español, inglés)

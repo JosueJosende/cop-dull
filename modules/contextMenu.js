@@ -7,6 +7,13 @@ export function initContextMenu() {
   const menuEdit = document.getElementById('menuEdit')
   const menuDelete = document.getElementById('menuDelete')
   
+  // Card Context Menu placeholders
+  const cardContextMenu = document.getElementById('cardContextMenu')
+  const cardMenuEdit = document.getElementById('cardMenuEdit')
+  const cardMenuNewFolder = document.getElementById('cardMenuNewFolder')
+  const cardMenuOpenAll = document.getElementById('cardMenuOpenAll')
+  const cardMenuDelete = document.getElementById('cardMenuDelete')
+
   const editModal = document.getElementById('editModal')
   const editTitleInput = document.getElementById('editTitle')
   const editUrlInput = document.getElementById('editUrl')
@@ -17,10 +24,13 @@ export function initContextMenu() {
   let targetId = null
   let targetElement = null
   let targetIsFolder = false
+  let cardTargetId = null
 
   // --- Context Menu Handler ---
   document.addEventListener('contextmenu', (e) => {
-    // Check if right-clicked element is a bookmark link, folder, or search result item
+    hideContextMenu()
+
+    // 1. Check if right-clicked element is a bookmark link, folder, or search result item
     const element = e.target.closest('.link, .folder, .search-result-item')
     
     if (element && element.dataset.id) {
@@ -36,10 +46,7 @@ export function initContextMenu() {
         // Folder options
         menuClone.style.display = 'flex'
         menuOpenNewTab.style.display = 'none'
-        // Reset separator if needed, but here we want separator after Clone effectively if we want separation from Edit
-        // Original layout: Clone, OpenNewTab, Sep, Edit...
-        // If Clone visible, OpenHidden -> Clone, Sep, Edit. This works fine.
-        menuSeparator.style.display = 'block' 
+        menuSeparator.style.display = 'block' // Keep block or flex? Original was block
       } else {
         // Bookmark options
         menuClone.style.display = 'none'
@@ -53,20 +60,39 @@ export function initContextMenu() {
       contextMenu.style.left = `${mouseX}px`
       contextMenu.style.top = `${mouseY}px`
       contextMenu.style.display = 'block'
-    } else {
-      hideContextMenu()
+      return
+    }
+
+    // 2. Check if right-clicked element is a CARD HEADER
+    const cardHeader = e.target.closest('.card-header')
+    if (cardHeader) {
+      const card = cardHeader.closest('.card')
+      if (card && card.dataset.id) {
+          e.preventDefault()
+          e.stopPropagation()
+          
+          cardTargetId = card.dataset.id
+          showCardContextMenu(e.clientX, e.clientY, cardTargetId)
+          return
+      }
+    }
+    
+    // 3. Block default context menu globally (except for inputs)
+    if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA' && !e.target.isContentEditable) {
+        e.preventDefault()
     }
   })
 
   // Hide context menu on click anywhere
   document.addEventListener('click', (e) => {
-    if (!contextMenu.contains(e.target)) {
+    if (!contextMenu.contains(e.target) && !cardContextMenu.contains(e.target)) {
       hideContextMenu()
     }
   })
 
   function hideContextMenu() {
     contextMenu.style.display = 'none'
+    cardContextMenu.style.display = 'none'
   }
 
   // --- Actions ---
@@ -275,41 +301,7 @@ export function initContextMenu() {
     })
   })
 
-  // --- Card Context Menu Listeners ---
-  const cardContextMenu = document.getElementById('cardContextMenu')
-  const cardMenuEdit = document.getElementById('cardMenuEdit')
-  const cardMenuNewFolder = document.getElementById('cardMenuNewFolder')
-  const cardMenuOpenAll = document.getElementById('cardMenuOpenAll')
-  const cardMenuDelete = document.getElementById('cardMenuDelete')
-  
-  let cardTargetId = null
-  
-  // Intercept right click on .card
-  document.addEventListener('contextmenu', (e) => {
-    // If we hit a .card but NOT a .link inside it? No, cards contain links/folders.
-    // The requirement says "Los elemento <div> con clase ".card", añadir menu contextual al presionarlos"
-    // Usually .card wraps the folder logic in masonry.js or bookmarks.js?
-    // In `bookmarks.js`: `const card = document.createElement('div'); card.className = 'card';`
-    // The card contains the folder content. 
-    // We should check if we clicked on the card itself or its header, OR if we want to override default behavior.
-    // "Los elemento <div> con clase ".card""
-    
-    // Check if we hit a card header specifically
-    const cardHeader = e.target.closest('.card-header')
-    
-    if (cardHeader) {
-      const card = cardHeader.closest('.card')
-      
-      if (card && card.dataset.id) {
-          e.preventDefault()
-          e.stopPropagation()
-          
-          cardTargetId = card.dataset.id
-          showCardContextMenu(e.clientX, e.clientY, cardTargetId)
-          return
-      }
-    }
-  })
+
   
   function showCardContextMenu(x, y, folderId) {
      // Hide other menus
