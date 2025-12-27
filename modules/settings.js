@@ -9,7 +9,7 @@ const DEFAULT_CONFIG = {
   showCleaner: true,
   showApps: false, // Although apps.js is off, we prep for it
   enableSync: false,
-  folderColor: '#c2c959'
+  folderColor: '#85b9ea'
 }
 
 let currentConfig = { ...DEFAULT_CONFIG }
