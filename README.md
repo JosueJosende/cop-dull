@@ -1,4 +1,4 @@
-# CopDull
+# 
 ![CopDull Banner](https://placehold.co/1200x200/transparent/333?text=CopDull&font=oswald)
 
 ![Estado del Proyecto](https://img.shields.io/badge/Estado-En%20Desarrollo-green)
@@ -6,7 +6,7 @@
 ![Licencia](https://img.shields.io/badge/Licencia-MIT-yellow)
 
 ## Índice
-- [CopDull](#copdull)
+- [](#)
   - [Índice](#índice)
   - [Descripción del Proyecto](#descripción-del-proyecto)
   - [Estado del Proyecto](#estado-del-proyecto)
