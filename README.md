@@ -1,5 +1,5 @@
 # CopDull
-![CopDull Banner](https://placehold.co/1200x400/transparent?text=CopDull&font=oswald)
+![CopDull Banner](https://placehold.co/1200x400/transparent?text=CopDull)
 
 ![Estado del Proyecto](https://img.shields.io/badge/Estado-En%20Desarrollo-green)
 ![Versión](https://img.shields.io/badge/Versi%C3%B3n-1.0-blue)
