@@ -1,5 +1,5 @@
 # CopDull
-![CopDull Banner](https://via.placeholder.com/1200x400?text=CopDull+Cover)
+![CopDull Banner](https://placehold.co/1200x400?text=CopDull+Cover)
 
 ![Estado del Proyecto](https://img.shields.io/badge/Estado-En%20Desarrollo-green)
 ![Versión](https://img.shields.io/badge/Versi%C3%B3n-1.0-blue)
@@ -26,7 +26,7 @@
 
 ## Descripción del Proyecto
 
-**CopDull** (del catalán *"Cop d'ull"*, que significa "Un vistazo") es una extensión para Google Chrome diseñada para transformar tu experiencia al abrir una nueva pestaña. 
+**CopDull** (del catalán *"Cop d'ull"*, que significa "un vistazo") es una extensión para Google Chrome diseñada para transformar tu experiencia al abrir una nueva pestaña. 
 
 Su objetivo principal es ofrecer una gestión de **marcadores** (bookmarks) visual, intuitiva y potente. Olvídate de las listas interminables de texto; CopDull organiza tus enlaces en tarjetas visuales, permitiéndote navegar por carpetas, buscar rápidamente y organizar tu contenido mediante **Drag & Drop** fluido. Además, incluye herramientas de limpieza para mantener tu navegador ordenado.
 
@@ -52,7 +52,7 @@ El proyecto se encuentra actualmente en una fase **funcional y estable**. Se han
 Tus marcadores se presentan en tarjetas organizadas automáticamente tipo "Masonry", aprovechando todo el espacio de tu pantalla.
 
 ### 2. Organización Intuitiva (Drag & Drop)
-![Demo Drag Drop](https://via.placeholder.com/600x300?text=Demo+Drag+Drop)
+![Demo Drag Drop](https://placehold.co/600x300?text=Demo+Drag+Drop)
 Mueve tus marcadores y carpetas libremente. 
 - Arrastra para reordenar.
 - Suelta dentro de una carpeta para mover contenido.
