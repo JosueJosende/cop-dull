@@ -1,5 +1,5 @@
 # CopDull
-![CopDull Banner](https://placehold.co/1200x400/transparent/text=CopDull&font=oswald)
+![CopDull Banner](https://placehold.co/1200x400/transparent?text=CopDull&font=oswald)
 
 ![Estado del Proyecto](https://img.shields.io/badge/Estado-En%20Desarrollo-green)
 ![Versión](https://img.shields.io/badge/Versi%C3%B3n-1.0-blue)
@@ -52,7 +52,7 @@ El proyecto se encuentra actualmente en una fase **funcional y estable**. Se han
 Tus marcadores se presentan en tarjetas organizadas automáticamente tipo "Masonry", aprovechando todo el espacio de tu pantalla.
 
 ### 2. Organización Intuitiva (Drag & Drop)
-![Demo Drag Drop](https://placehold.co/600x300/transparent?text=Demo+Drag+Drop&font=oswald)
+
 Mueve tus marcadores y carpetas libremente. 
 - Arrastra para reordenar.
 - Suelta dentro de una carpeta para mover contenido.
