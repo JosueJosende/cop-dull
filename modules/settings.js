@@ -8,7 +8,8 @@ const DEFAULT_CONFIG = {
   showRecentTop: true,
   showCleaner: true,
   showApps: false, // Although apps.js is off, we prep for it
-  enableSync: false
+  enableSync: false,
+  folderColor: '#c2c959'
 }
 
 let currentConfig = { ...DEFAULT_CONFIG }
@@ -32,6 +33,8 @@ const I18N = {
     themeLight: 'Claro',
     themeDark: 'Oscuro',
     selectLang: 'Seleccionar Idioma',
+    folderColor: 'Color de carpeta',
+    folderColorDesc: 'Cambiar el color del icono de la carpeta',
     
     // Header
     searchPlaceholder: 'Buscar...',
@@ -103,6 +106,8 @@ const I18N = {
     themeLight: 'Light',
     themeDark: 'Dark',
     selectLang: 'Select Language',
+    folderColor: 'Folder Color',
+    folderColorDesc: 'Change the color of the folder icon.',
 
     // Header
     searchPlaceholder: 'Search...',
@@ -174,6 +179,8 @@ const I18N = {
     themeLight: 'Clar',
     themeDark: 'Fosc',
     selectLang: 'Seleccionar Idioma',
+    folderColor: 'Color de carpeta',
+    folderColorDesc: 'Canvia el color de la icona "carpeta".',
 
     // Header
     searchPlaceholder: 'Cerca...',
@@ -329,7 +336,9 @@ export function initSettings() {
   container.style.opacity = '0'
   container.style.transition = 'opacity 0.2s ease-in-out'
 
-  loadConfig().then(() => {
+  const loadPromise = loadConfig().then(() => {
+    // Sync the exported variable with the loaded config
+    folderColor = currentConfig.folderColor
     applyConfig()
     applyTranslations()
   })
@@ -343,7 +352,11 @@ export function initSettings() {
       openSettings()
     }
   })
+
+  return loadPromise
 }
+
+export let folderColor = currentConfig.folderColor
 
 function openSettings() {
   const container = document.getElementById('settingsView')
@@ -462,6 +475,15 @@ function renderSettingsUI() {
           <option value="dark" ${currentConfig.theme === 'dark' ? 'selected' : ''}>${t.themeDark}</option>
         </select>
       </div>
+
+      <div class="setting-item">
+        <div class="setting-info">
+          <span class="setting-label">${t.folderColor}</span>
+          <span class="setting-desc">${t.folderColorDesc}</span>
+        </div>
+ 
+        <input type="color" id="folderColorSetting" value="${currentConfig.folderColor}">
+      </div>
     </div>
 
     <div class="settings-section">
@@ -504,10 +526,15 @@ function renderSettingsUI() {
     renderSettingsUI()
     applyTranslations()
   })
+
+  document.getElementById('folderColorSetting').addEventListener('change', (e) => {
+    updateConfig('folderColor', e.target.value)
+  })
 }
 
 function updateConfig(key, value) {
   currentConfig[key] = value
+  if (key === 'folderColor') folderColor = value
   saveConfig()
   applyConfig()
 }
@@ -579,6 +606,12 @@ function applyConfig() {
   } else {
       removeDarkTheme()
   }
+
+  // Apply visual updates: Folder Color
+  const folderSvgs = document.querySelectorAll('.folder-title svg')
+  folderSvgs.forEach(svg => {
+     svg.setAttribute('fill', currentConfig.folderColor)
+  })
 }
 
 // Minimal Dark Theme Injection

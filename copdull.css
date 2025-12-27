@@ -153,15 +153,21 @@ article.page {
   gap: 4px;
   transition: all 0.3s ease;
   font-size: 12px;
-  width: 100%;
 }
 
 .card .folder-title { 
-  background: url('./assets/folder.png') no-repeat;
-  background-size: 17px;
-  background-position: 9px 40%;
-  padding-left: 30px;
   font-weight: 600;
+
+  & svg {
+    min-width: 18px;
+    min-height: 18px;
+  }
+
+  & span {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis; 
+  }
 }
 
 .card .folder {
@@ -189,7 +195,6 @@ article.page {
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
-  width: 180px;
 } 
 
 .card .link a:hover {

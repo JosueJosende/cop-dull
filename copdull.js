@@ -11,21 +11,24 @@ import { initAddFolder } from './modules/addFolder.js'
 import { initSettings } from './modules/settings.js'
 import { initModals } from './modules/modal.js'
 
-document.addEventListener('DOMContentLoaded', function () {
-  // Recuperar bookmarks
-  chrome.bookmarks.getTree(function (bookmarkTreeNodes) {
-    displayBookmarks(bookmarkTreeNodes).then(() => {
-        initDragDrop()
-    })
-  })
+document.addEventListener('DOMContentLoaded', async function () {
 
   initSearch()
   initContextMenu()
   initDashboard()
   initCleaner()
   initAddFolder()
-  initSettings()
   initModals()
+
+  // Wait for settings to load (theme, folder color, etc.)
+  await initSettings()
+
+  // Recuperar bookmarks
+  chrome.bookmarks.getTree(function (bookmarkTreeNodes) {
+    displayBookmarks(bookmarkTreeNodes).then(() => {
+        initDragDrop()
+    })
+  })
 
   // Recuperar aplicaciones instaladas
   /* chrome.management.getAll(function (apps) {

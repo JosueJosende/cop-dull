@@ -1,4 +1,5 @@
 import { initMasonry, reloadMasonry } from './masonry.js'
+import { folderColor } from './settings.js'
 
 export async function displayBookmarks(nodes) {
   const mainOnly = nodes[0].children[0].children
@@ -70,7 +71,10 @@ const content = (fill, parentElement, isFolder) => {
 
       if (isFolder) folder.style.display = 'none'
 
-      folder.innerHTML = `<div class="folder-title f${fill.id}">${node.title}</div>`
+      folder.innerHTML = `<div class="folder-title f${fill.id}">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="${folderColor}"><path d="M9 3a1 1 0 0 1 .608 .206l.1 .087l2.706 2.707h6.586a3 3 0 0 1 2.995 2.824l.005 .176v8a3 3 0 0 1 -2.824 2.995l-.176 .005h-14a3 3 0 0 1 -2.995 -2.824l-.005 -.176v-11a3 3 0 0 1 2.824 -2.995l.176 -.005h4z" /></svg>
+        <span>${node.title}</span>
+      </div>`
 
       parentElement.appendChild(folder)
 
