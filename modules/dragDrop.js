@@ -9,7 +9,7 @@ export function initDragDrop() {
 
   let masonryTimeout = null
 
-  // Delegated listeners
+  // listeners
   container.addEventListener('dragstart', handleDragStart)
   container.addEventListener('dragover', handleDragOver)
   container.addEventListener('dragleave', handleDragLeave)
@@ -26,7 +26,7 @@ export function initDragDrop() {
     e.dataTransfer.effectAllowed = 'move'
     e.dataTransfer.setData('text/plain', dragSourceId)
 
-    // Visuals
+    // Visuales
     requestAnimationFrame(() => {
       target.classList.add('dragging')
     })
@@ -39,12 +39,12 @@ export function initDragDrop() {
     const target = e.target.closest('.link, .folder, .card')
     if (!target) return
 
-    // Avoid dropping inside itself
+    // Evitar soltar dentro de sí mismo
     if (dragSource && (target === dragSource || dragSource.contains(target))) {
       return
     }
 
-    // Logic for placeholder vs "dropping into folder/card"
+    // Lógica para placeholder vs "soltar dentro de carpeta/card"
     const isFolder = target.classList.contains('folder')
     const isCard = target.classList.contains('card')
     
@@ -56,22 +56,22 @@ export function initDragDrop() {
     const relativeY = e.clientY - rect.top
     const height = rect.height
     
-    // Thresholds: if hovering middle of a FOLDER/CARD, maybe drop INSIDE?
-    // For bookmarks, we always reorder.
-    // For folders, we might reorder (top/bottom edge) or drop inside (middle).
+    // Umbral: si se está sobre el medio de una CARPETA/CARTA, puede soltar DENTRO?
+    // Para marcadores, siempre reordenamos.
+    // Para carpetas, podemos reordenar (bordes superior/inferior) o soltar dentro (medio).
     
     const edgeThreshold = 0.25
     
-    // Reset previous folder highlights
+    // Restablecer resaltados de carpetas anteriores
     document.querySelectorAll('.drop-target-folder').forEach(el => el.classList.remove('drop-target-folder'))
 
-    // DROP INTO FOLDER LOGIC
-    // Allow dropping link/folder INTO another folder/card.
-    // Cannot drop Card into Card (usually).
+    // LOGICA DE SOLTAR DENTRO DE CARPETA
+    // Permitir soltar enlace/carpeta DENTRO de otra carpeta/cartel.
+    // No se puede soltar una Carta en una Carta (generalmente).
     const draggingCard = dragSource.classList.contains('card')
     
     if (!draggingCard && (isFolder || isCard)) {
-       // If hovering middle -> Drop Inside
+       // Si se está sobre el medio -> Soltar Dentro
        if (relativeY > height * edgeThreshold && relativeY < height * (1 - edgeThreshold)) {
           if (placeholder.parentNode) placeholder.parentNode.removeChild(placeholder)
           target.classList.add('drop-target-folder')
@@ -79,22 +79,22 @@ export function initDragDrop() {
        }
     }
 
-    // REORDER LOGIC
-    // If dragging Card, only reorder against Cards.
-    // If dragging Link/Folder, only reorder against Link/Folder.
+    // LOGICA DE REORDENAR
+    // Si se está arrastrando una Carta, solo se puede reordenar contra Cartas.
+    // Si se está arrastrando un Enlace/Carpeta, solo se puede reordenar contra Enlace/Carpeta.
     
-    if (draggingCard && !isCard) return // Can't reorder Card against a Link
-    if (!draggingCard && isCard) return // Can't reorder Link against a Card (visual hierarchy mismatch)
+    if (draggingCard && !isCard) return // No se puede reordenar una Carta contra un Enlace
+    if (!draggingCard && isCard) return // No se puede reordenar un Enlace contra una Carta (desacuerdo en la jerarquía visual)
     
-    // Insert PlaceHolder
+    // Insertar PlaceHolder
     if (relativeY < height / 2) {
       target.parentNode.insertBefore(placeholder, target)
     } else {
       target.parentNode.insertBefore(placeholder, target.nextSibling)
     }
 
-    // Throttle Masonry Layout for smoother experience
-    // Only needed if dragging causes layout shift (e.g. Card dragging, or adding placeholder changes height)
+    // Acelerar la disposición de la masonry para una experiencia más suave
+    // Solo necesario si el arrastre causa un desplazamiento de la disposición (por ejemplo, arrastrar una tarjeta, o agregar un marcador cambia la altura)
     if (!masonryTimeout) {
         masonryTimeout = setTimeout(() => {
             reloadMasonry()
@@ -115,21 +115,21 @@ export function initDragDrop() {
     
     const dropTargetFolder = document.querySelector('.drop-target-folder')
     
-    // DROP INTO FOLDER
+    // SOLTAR DENTRO DE CARPETA
     if (dropTargetFolder) {
-      // Use dataset.id for Folders, but for Cards we need the FOLDER ID it represents.
-      // Cards have dataset.id (which is the folder ID).
+      // Usa dataset.id para carpetas, pero para tarjetas necesitamos el ID de la carpeta que representa.
+      // Las tarjetas tienen dataset.id (que es el ID de la carpeta).
       const parentId = dropTargetFolder.dataset.id
       
       if (dragSource) dragSource.remove()
-      moveBookmark(dragSourceId, parentId) // Appends to end
+      moveBookmark(dragSourceId, parentId) // Añade al final
     } 
-    // REORDER
+    // REORDENAR
     else if (placeholder.parentNode) {
       const parentContainer = placeholder.parentNode
       let parentId = null
       
-      // Determine Parent ID correct logic
+      // Determinar ID correcto del padre
       if (parentContainer.classList.contains('folder')) {
          parentId = parentContainer.dataset.id
       } else if (parentContainer.classList.contains('card')) {
@@ -142,7 +142,7 @@ export function initDragDrop() {
          }
       }
 
-      // Calculate Index
+      // Calcular índice
       let newIndex = 0
       let isMovingDown = false
       const siblings = Array.from(parentContainer.children)
@@ -163,13 +163,12 @@ export function initDragDrop() {
       }
       
       const sourceParentId = dragSource ? dragSource.dataset.parentId : null
-      // Strict equality check might fail if types differ (string vs int in dataset if manual/api mismatch)
-      // Usually dataset is string. API returns strings.
+      // La verificación de igualdad estricta puede fallar si los tipos difieren (cadena vs. int en el conjunto de datos si no hay coincidencia manual/API)
+      // Generalmente el conjunto de datos es cadena. La API devuelve cadenas.
       if (sourceParentId == parentId && isMovingDown) {
           newIndex++
       }
       
-      // Optimistic Update
       parentContainer.insertBefore(dragSource, placeholder)
       
       moveBookmark(dragSourceId, parentId, newIndex)
@@ -206,7 +205,7 @@ export function initDragDrop() {
     chrome.bookmarks.move(id, destination, (result) => {
        if (chrome.runtime.lastError) {
          console.error(chrome.runtime.lastError.message)
-         // window.location.reload() // Or show error
+         // window.location.reload() // O mostrar error
        }
     })
   }

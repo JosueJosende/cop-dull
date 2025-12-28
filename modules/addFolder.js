@@ -1,5 +1,5 @@
 
-import { fadeIn, fadeOut } from './search.js'
+import { fadeIn, fadeOut } from './nav.js'
 
 export function initAddFolder() {
   const addFolderBtn = document.getElementById('addFolderBtn')
@@ -9,17 +9,7 @@ export function initAddFolder() {
   const createBtn = document.getElementById('createFolderBtn')
   const input = document.getElementById('newFolderTitle')
   
-  // Elements to hide when other views are active?
-  // The user says: "This button should be hidden when the view changes (search, Recents/Top, Clean)"
-  // This implies we need to listener to state changes or proactively check.
-  // Actually, simpler: Search/Dashboard/Cleaner logic should just hide this button or the whole header actions container?
-  // The header-actions container has "Recents/Top", "Clean", "+ Folder".
-  // If we just want to hide THIS button, we can expose a function or listen to events.
-  // BUT the easiest way is to modify the existing toggle logics in search.js, dashboard.js, cleaner.js to also hide this button.
-  // HOWEVER, I can also add an observer or just poll state? No, direct control is better.
-  
-  // Let's implement the Modal Logic first.
-  
+  // Implementemos la lógica del Modal primero.
   addFolderBtn.addEventListener('click', () => {
     openModal()
   })
@@ -27,8 +17,8 @@ export function initAddFolder() {
   function openModal() {
     input.value = ''
     modal.style.display = 'flex'
-    // Animation handled by CSS usually if class 'modal-overlay' has it, but here style is just toggled.
-    // The CSS has animation: fadeIn.
+    // La animación se maneja por CSS generalmente si la clase 'modal-overlay' tiene animación, pero aquí solo se cambia el estilo.
+    // El CSS tiene animation: fadeIn.
     input.focus()
   }
   
@@ -36,7 +26,7 @@ export function initAddFolder() {
     const title = input.value.trim()
     if (!title) return
     
-    // Check if we have a specific parent override (from context menu)
+    // Comprobar si tenemos un override de parent específico (desde el menú contextual)
     let parentId = '1' // Default: Bookmarks Bar
     if (modal.dataset.parentId) {
         parentId = modal.dataset.parentId
@@ -46,7 +36,7 @@ export function initAddFolder() {
       parentId: parentId,
       title: title
     }, (newFolder) => {
-      // Success
+      // Éxito
       closeModal()
       
       // Cleanup custom parent
@@ -75,19 +65,19 @@ export function initAddFolder() {
 
 async function refreshBookmarks() {
   const container = document.getElementById('bookmarkList')
-  // We need to re-import displayBookmarks or move the logic?
-  // Since we are in a module system, we can just import it.
-  // But displayBookmarks expects `bookmarkTreeNodes`.
+  // Se necesita re-importar displayBookmarks o mover la lógica?
+  // Como estamos en un sistema de módulos, podemos simplemente importarlo.
+  // Pero displayBookmarks espera `bookmarkTreeNodes`.
   
-  // Dynamic import to avoid circular dep if needed? No, standard import is fine usually.
+  // Import dinámico para evitar dependencias circulares si es necesario? No, la importación estándar generalmente es suficiente.
   const { displayBookmarks } = await import('./bookmarks.js')
   const { initDragDrop } = await import('./dragDrop.js')
   
-  container.innerHTML = '' // Clear current
+  container.innerHTML = '' // Limpiar el contenedor actual
   
   chrome.bookmarks.getTree(async (nodes) => {
     await displayBookmarks(nodes)
-    initDragDrop() // Re-bind drag drop
+    initDragDrop() // Volver a enlazar drag drop
   })
 }
 

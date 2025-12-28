@@ -5,33 +5,36 @@ export function initSearch() {
   
   let allBookmarks = []
 
-  // Ensure initial state
+  // Asegurar estado inicial
   resultsContainer.style.opacity = '0'
   resultsContainer.style.display = 'none'
   bookmarksContainer.style.opacity = '1'
   bookmarksContainer.style.transition = 'opacity 0.2s ease-in-out'
   resultsContainer.style.transition = 'opacity 0.2s ease-in-out'
 
-  // 1. Fetch and Flatten Bookmarks
+  // Obtener y aplanar marcadores
   chrome.bookmarks.getTree((nodes) => {
     allBookmarks = flattenBookmarks(nodes[0], '')
   })
 
-  // 2. Event Listener
+  // Escuchador de eventos
   input.addEventListener('input', (e) => {
-    const query = e.target.value.toLowerCase().trim()
     const recentTopContainer = document.getElementById('recentTopList')
     const cleanerContainer = document.getElementById('cleanerView')
     const settingsContainer = document.getElementById('settingsView')
     const addFolderBtn = document.getElementById('addFolderBtn')
+    
+    const query = e.target.value.toLowerCase().trim()
 
     if (query.length === 0) {
       if (resultsContainer.style.display !== 'none') {
         fadeOut(resultsContainer, () => {
           resultsContainer.style.display = 'none'
           bookmarksContainer.style.display = 'block'
+
           if (addFolderBtn) addFolderBtn.style.display = 'flex'
-          // Small timeout to ensure display:block is applied before opacity transition
+
+          // timeout para asegurar que display:block se aplica antes de la transición de opacidad
           requestAnimationFrame(() => {
             fadeIn(bookmarksContainer)
           })
@@ -42,10 +45,10 @@ export function initSearch() {
       return
     }
     
-    // Hide Add Folder Btn
+    // Ocultar Botón de Añadir Carpeta
     if (addFolderBtn) addFolderBtn.style.display = 'none'
     
-    // Ensure other views are hidden
+    // Asegurar que las demás vistas estén ocultas
     const viewsToHide = [recentTopContainer, cleanerContainer, settingsContainer]
     
     viewsToHide.forEach(container => {
@@ -56,17 +59,17 @@ export function initSearch() {
       }
     })
     
-    // Also reset buttons active state if needed
+    // Resetear estado de botones activos si es necesario
     const settingsBtn = document.getElementById('settingsBtn')
     if (settingsBtn) settingsBtn.style.background = ''
 
-    // Filter
+    // Filtrar
     const matches = allBookmarks.filter(item => 
       item.title.toLowerCase().includes(query) || 
       (item.url && item.url.toLowerCase().includes(query))
     )
 
-    // Render
+    // Renderizar resultados
     renderResults(matches, resultsContainer)
 
     if (bookmarksContainer.style.display !== 'none') {
@@ -78,7 +81,7 @@ export function initSearch() {
         })
       })
     } else if (resultsContainer.style.display === 'none') {
-      // If bookmarks was already hidden (e.g. from Dashboard view), just show results
+      // Si los marcadores ya estaban ocultos (por ejemplo, desde la vista del Dashboard), solo mostrar resultados
       resultsContainer.style.display = 'block'
       requestAnimationFrame(() => {
         fadeIn(resultsContainer)
@@ -104,8 +107,8 @@ export function fadeOut(element, callback) {
 export function flattenBookmarks(node, path) {
   let items = []
   
-  // Skip root level titles usually, or handle nicely. 
-  // node 0 usually has children "Bookmarks Bar", "Other Bookmarks".
+  // Saltar los títulos de nivel raíz generalmente, o manejarlos bien. 
+  // node 0 generalmente tiene hijos "Bookmarks Bar", "Other Bookmarks".
   
   if (node.children) {
     const newPath = node.title ? (path ? `${path} > ${node.title}` : node.title) : path
@@ -113,7 +116,7 @@ export function flattenBookmarks(node, path) {
       items = items.concat(flattenBookmarks(child, newPath))
     })
   } else if (node.url) {
-    // It's a bookmark
+    // Es un marcador
     items.push({
       title: node.title,
       url: node.url,
@@ -128,7 +131,7 @@ export function flattenBookmarks(node, path) {
 function renderResults(matches, container) {
   container.innerHTML = ''
   
-  // Add a "Card Header" for the results
+  // Añadir un "Card Header" para los resultados
   const header = document.createElement('div')
   header.className = 'header-label'
   header.textContent = `Search Results (${matches.length})`
@@ -169,9 +172,9 @@ function renderResults(matches, container) {
     div.appendChild(a)
     div.appendChild(pathSpan)
     
-    // Make the whole row clickable
+    // Hacer toda la fila clickeable
     div.addEventListener('click', (e) => {
-        // Avoid double click if clicking the link directly
+        // Evitar doble clic si se hace clic en el enlace directamente
         if (e.target.tagName !== 'A') {
             window.location.href = item.url
         }

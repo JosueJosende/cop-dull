@@ -1,5 +1,5 @@
 
-import { fadeIn, fadeOut } from './search.js'
+import { fadeIn, fadeOut } from './nav.js'
 import { getTranslation } from './settings.js'
 
 export function initDashboard() {
@@ -10,42 +10,42 @@ export function initDashboard() {
   const btn = document.getElementById('toggleRecentsBtn')
   
   const cleanerContainer = document.getElementById('cleanerView')
-  // Set initial transition style for dashboard
+  // Establecer estilo de transición inicial para el dashboard
   dashboardContainer.style.opacity = '0'
   dashboardContainer.style.transition = 'opacity 0.2s ease-in-out'
   
   const addFolderBtn = document.getElementById('addFolderBtn')
 
   btn.addEventListener('click', () => {
-    // Check if we are currently showing dashboard
+    // Comprobar si estamos mostrando el dashboard actualmente
     const isShowing = dashboardContainer.style.display !== 'none' && dashboardContainer.style.opacity !== '0'
 
     if (isShowing) {
-      // HIDE DASHBOARD
+      // Ocultar el dashboard
       fadeOut(dashboardContainer, () => {
           dashboardContainer.style.display = 'none'
           
           if (searchInput.value.trim() !== '') {
             searchContainer.style.display = 'block'
             requestAnimationFrame(() => fadeIn(searchContainer))
-            // Search is active, keep button hidden
+            // Busqueda activa, mantener botón oculto
             if (addFolderBtn) addFolderBtn.style.display = 'none' 
         } else {
             bookmarkContainer.style.display = 'block'
             requestAnimationFrame(() => fadeIn(bookmarkContainer))
-            // Main view, show button
+            // Vista principal, mostrar botón
             if (addFolderBtn) addFolderBtn.style.display = 'flex'
           }
       })
       
       btn.style.background = ''
     } else {
-      // SHOW DASHBOARD
+      // MOSTRAR DASHBOARD
       
-      // Hide Folder Button
+      // Ocultar botón de carpeta
       if (addFolderBtn) addFolderBtn.style.display = 'none'
       
-      // Identify what is currently visible to fade it out
+      // Identificar qué está visible para desvanecerlo
       const views = [bookmarkContainer, searchContainer, cleanerContainer, document.getElementById('settingsView')]
       const visibleView = views.find(v => v && v.style.display !== 'none' && v.style.opacity !== '0')
       
@@ -58,7 +58,7 @@ export function initDashboard() {
         })
       }
 
-      // Hide Settings Button active state if was active
+      // Ocultar estado activo del botón de configuración si estaba activo
       const settingsBtn = document.getElementById('settingsBtn')
       if (settingsBtn) settingsBtn.style.background = ''
 
@@ -68,7 +68,7 @@ export function initDashboard() {
           showDash()
         })
       } else {
-        // If nothing is visible (maybe mid-transition state or initial), just show
+        // Si nada está visible (tal vez en un estado de transición o inicial), solo mostrar
         showDash()
       }
     }
@@ -78,7 +78,7 @@ export function initDashboard() {
 function renderDashboard(container) {
   container.innerHTML = ''
   
-  // 1. Top Sites Section
+  // 1. Sección de sitios principales
   const topSection = document.createElement('div')
   topSection.className = 'rt-section'
   topSection.innerHTML = `
@@ -90,7 +90,7 @@ function renderDashboard(container) {
   `
   container.appendChild(topSection)
 
-  // 2. Recent Tabs Section
+  // 2. Sección de pestañas recientes
   const recentSection = document.createElement('div')
   recentSection.className = 'rt-section'
   recentSection.innerHTML = `
@@ -102,7 +102,7 @@ function renderDashboard(container) {
   `
   container.appendChild(recentSection)
 
-  // Load Data
+  // Cargar datos
   loadTopSites()
   loadRecentTabs()
 }
@@ -125,18 +125,18 @@ function loadRecentTabs() {
     if (!list) return
 
     sessions.forEach(session => {
-      // Could be tab or window
+      // Puede ser una pestaña o una ventana
       if (session.tab) {
         const item = createItem(session.tab.title, session.tab.url)
         list.appendChild(item)
       } else if (session.window) {
-        // Maybe show window summary? For now just skip or show first tab
+        // Podría mostrar un resumen de la ventana? Por ahora solo saltar o mostrar la primera pestaña
         // session.window.tabs
         const count = session.window.tabs.length
         const title = `${count} Tabs (Window)`
-        // We can't really link to a "window restore" easily with a simple href, 
-        // would need chrome.sessions.restore(session.sessionId).
-        // Let's stick to clickable links for now or handle click.
+        // No podemos realmente enlazar a una "restauración de ventana" fácilmente con un enlace simple href, 
+        // necesitaría chrome.sessions.restore(session.sessionId).
+        // Vamos a mantener los enlaces clicables por ahora o manejar el clic.
         
         const div = document.createElement('div')
         div.className = 'rt-item'
@@ -160,7 +160,7 @@ function createItem(title, url) {
   a.href = url
   
   const img = document.createElement('img')
-  // Use google favicon service
+  // Usar el servicio de favicon de google
   img.src = `https://s2.googleusercontent.com/s2/favicons?domain=${url}`
   
   const span = document.createElement('span')

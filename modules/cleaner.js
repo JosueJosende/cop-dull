@@ -1,4 +1,4 @@
-import { flattenBookmarks, fadeIn, fadeOut } from './search.js'
+import { flattenBookmarks, fadeIn, fadeOut } from './nav.js'
 import { getTranslation } from './settings.js'
 
 export function initCleaner() {
@@ -8,22 +8,22 @@ export function initCleaner() {
   const searchContainer = document.getElementById('searchResults')
   const dashboardContainer = document.getElementById('recentTopList')
   
-  // Initial style
+  // Establecer estilo inicial
   cleanerContainer.style.opacity = '0'
   cleanerContainer.style.transition = 'opacity 0.2s ease-in-out'
 
   const addFolderBtn = document.getElementById('addFolderBtn')
 
   btn.addEventListener('click', () => {
-    // Hide others
+    // Ocultar otros
     const views = [bookmarkContainer, searchContainer, dashboardContainer, document.getElementById('settingsView')]
     const visibleView = views.find(v => v && v.style.display !== 'none' && v.style.opacity !== '0')
 
-    // Reset Dashboard Button State if it was active
+    // Restablecer estado del botón del dashboard si estaba activo
     const dashboardBtn = document.getElementById('toggleRecentsBtn')
     if (dashboardBtn) dashboardBtn.style.background = ''
 
-    // Reset Settings Button State
+    // Restablecer estado del botón de configuración
     const settingsBtn = document.getElementById('settingsBtn')
     if (settingsBtn) settingsBtn.style.background = ''
 
@@ -34,7 +34,7 @@ export function initCleaner() {
       })
       if (addFolderBtn) addFolderBtn.style.display = 'none'
     } else if (cleanerContainer.style.display !== 'none' && cleanerContainer.style.opacity !== '0') {
-      // Toggle off if already showing
+      // Apagar si ya se muestra
       closeCleaner()
     } else {
       showCleaner()
@@ -103,7 +103,7 @@ function renderCleanerStructure(container) {
   `
   
   document.getElementById('closeCleanerBtn').addEventListener('click', () => {
-    // We need to access closeCleaner from init scope or reproduce logic.
+    // Necesitamos acceder a closeCleaner desde el ámbito de init o reproducir la lógica.
     const cleanerContainer = document.getElementById('cleanerView')
     const bookmarkContainer = document.getElementById('bookmarkList')
     const addFolderBtn = document.getElementById('addFolderBtn')
@@ -130,7 +130,7 @@ function analyzeBookmarks() {
     const allItems = flattenBookmarks(nodes[0], '')
     allBookmarksCache = allItems
     
-    // Find Duplicates
+    // Buscar duplicados
     const urlMap = {}
     allItems.forEach(item => {
       if (!urlMap[item.url]) urlMap[item.url] = []
@@ -146,7 +146,7 @@ function analyzeBookmarks() {
     
     renderDuplicates(duplicates)
     
-    // Find Empty Folders
+    // Buscar carpetas vacías
     const emptyFolders = []
     findEmptyFoldersRecursive(nodes[0], '', emptyFolders)
     
@@ -158,12 +158,12 @@ function analyzeBookmarks() {
 
 function findEmptyFoldersRecursive(node, path, resultList) {
   if (node.children) {
-    // Check if empty
-    // Root folders (0, 1, 2 typically) shouldn't be deleted usually unless empty user folders?
-    // Node 0 is root. Node 1 is "Bookmark Bar". Node 2 is "Other Bookmarks".
-    // We should probably safeguard against deleting root nodes even if empty.
-    // Usually user created folders have higher IDs or are children of these.
-    // We can just check `parentId`.
+    // Comprobar si está vacía
+    // carpetas raíz (0, 1, 2 típicamente) no deberían ser eliminadas generalmente a menos que estén vacías las carpetas del usuario?
+    // Node 0 es la raíz. Node 1 es "Barra de marcadores". Node 2 es "Otros marcadores".
+    // Deberíamos probablemente prevenir la eliminación de nodos raíz incluso si están vacíos.
+    // Generalmente, los usuarios crean carpetas con IDs más altos o que son hijos de estas.
+    // Podemos simplemente verificar `parentId`.
     
     const isRoot = node.id === '0' || node.parentId === '0' 
     
@@ -193,7 +193,7 @@ function renderDuplicates(duplicates) {
   }
   
   duplicates.forEach(group => {
-    // Header for the group (URL)
+    // Encabezado para el grupo (URL)
     const header = document.createElement('div')
     header.style.padding = '5px'
     header.style.fontWeight = 'bold'
@@ -343,7 +343,7 @@ async function startBrokenLinkScan() {
   
   statusDiv.textContent = `Escaneando ${uniqueUrls.length} URLs...`
   
-  // Concurrency Limiter
+  // Límite de concurrencia
   const LIMIT = 5
   const results = []
   
@@ -358,10 +358,10 @@ async function startBrokenLinkScan() {
       statusDiv.textContent = `Escaneando: ${checked} / ${uniqueUrls.length}`
   }
   
-  // Filter broken
+  // Filtrar rotos
   const brokenResults = results.filter(r => !r.ok)
   
-  // Map back to bookmarks
+  // Mapear de vuelta a marcadores
   const brokenBookmarks = []
   brokenResults.forEach(res => {
      // Find all bookmarks with this URL
@@ -386,7 +386,7 @@ async function checkUrl(url) {
     const timeoutId = setTimeout(() => controller.abort(), 10000) // 10s timeout
     
     try {
-        // Try HEAD first
+        // Intentar HEAD primero
         const response = await fetch(url, { 
             method: 'HEAD', 
             signal: controller.signal
@@ -394,7 +394,7 @@ async function checkUrl(url) {
         clearTimeout(timeoutId)
         
         if (!response.ok) {
-             // Retry with GET if Method Not Allowed (405) or Forbidden (403) which sometimes blocks HEAD
+             // Reintentar con GET si Method Not Allowed (405) o Forbidden (403) que a veces bloquean HEAD
              if (response.status === 405 || response.status === 403) {
                  return await checkUrlGet(url)
              }
@@ -403,7 +403,7 @@ async function checkUrl(url) {
         return { url, ok: true }
     } catch (err) {
         clearTimeout(timeoutId)
-        // If HEAD failed (network), try GET just in case (e.g. some servers reset connection on HEAD)
+        // Si HEAD falla (red), intentar GET simplemente por si acaso (e.g. algunos servidores restablecen la conexión en HEAD)
         return await checkUrlGet(url)
     }
 }

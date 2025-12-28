@@ -9,13 +9,13 @@ export async function displayBookmarks(nodes) {
   })
 
   const list = document.getElementById('bookmarkList')
-  list.innerHTML = '' // Clear list if needed
+  list.innerHTML = '' // Limpiar lista si es necesario
 
   for (const card in cards) {
     const child = cards[card][0]
     
     if (child.children) {
-      // Create a card for each title
+      // Crear una tarjeta para cada título
       const cardElement = document.createElement('div')
       cardElement.classList.add('card')
       cardElement.id = `c${child.id}`
@@ -24,7 +24,7 @@ export async function displayBookmarks(nodes) {
       cardElement.dataset.id = child.id
       cardElement.dataset.parentId = child.parentId
 
-      // SVG for Back Button
+      // SVG para el botón de retroceso
       const backSvg = `<svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"></path></svg>`
 
       cardElement.innerHTML = `
@@ -59,10 +59,10 @@ export async function displayBookmarks(nodes) {
 const content = (fill, parentElement, isFolder) => {
   Object.entries(fill.children).forEach(([key, node]) => {
     if (node.children) {
-      // is folder
+      // es una carpeta
       const folder = document.createElement('div')
       folder.classList.add('folder')
-      folder.classList.add(`f${fill.id}`) // Class to identify siblings
+      folder.classList.add(`f${fill.id}`)
       folder.id = `f${node.id}`
       folder.dataset.id = node.id
       folder.dataset.parentId = node.parentId
@@ -119,15 +119,15 @@ const handleFolderClick = (e) => {
 
   console.log(`[Enter] From: ${currentDisplayedId} To: ${newId} (${newName})`)
 
-  // 1. Hide Current Items (Siblings)
+  // 1. Ocultar los elementos actuales (hermanos)
   const currentItems = card.querySelectorAll(`.${currentDisplayedId}`)
   currentItems.forEach(el => {
       if (el === folder) return 
       el.style.display = 'none'
   })
 
-  // 2. Prepare Target Folder (Container)
-  // We use setProperty to ensure priority
+  // 2. Preparar la carpeta objetivo (contenedor)
+  // Usamos setProperty para asegurar prioridad
   folder.style.setProperty('display', 'flex', 'important')
   folder.style.setProperty('flex-direction', 'column', 'important')
   folder.style.width = '100%'
@@ -135,7 +135,7 @@ const handleFolderClick = (e) => {
   folder.style.cursor = 'default' 
   folder.style.position = 'relative'
 
-  // 3. Show Children
+  // 3. Mostrar los hijos
   let found = 0
   const children = Array.from(folder.children)
   children.forEach(child => {
@@ -149,7 +149,7 @@ const handleFolderClick = (e) => {
             child.style.flexDirection = 'column'
             child.style.cursor = 'pointer'
             
-            // Ensure sub-folder titles are visible
+            // Asegurar que los títulos de las subcarpetas sean visibles
             const subTitle = child.querySelector('.folder-title')
             if (subTitle) subTitle.style.display = 'flex'
           }
@@ -158,19 +158,19 @@ const handleFolderClick = (e) => {
   })
   console.log(`[Enter] Children toggled: ${found}`)
 
-  // 4. Update Header
+  // 4. Actualizar el encabezado
   const titleSpan = card.querySelector('.card-header .title .name')
   titleSpan.textContent = newName
 
-  // 5. Show Back Button
+  // 5. Mostrar el botón de retroceso
   const backBtn = card.querySelector('.back-button')
   backBtn.style.display = 'flex'
 
-  // 6. Update State
+  // 6. Actualizar el estado
   card.dataset.currentId = newId
   
-  // 7. Recalculate Layout
-  // Use a timeout to allow DOM to settle and styles to apply before measuring height
+  // 7. Recalcular el diseño
+  // Usamos un timeout para permitir que el DOM se establezca y los estilos se apliquen antes de medir la altura
   setTimeout(() => {
     card.style.height = 'auto'
     const h = card.scrollHeight
@@ -193,7 +193,7 @@ const goBack = (e) => {
   const parentContainer = currentFolderDiv.parentElement
   const parentId = parentContainer.id
   
-  // Determine Destination
+  // Determinar el destino
   let destId = ''
   let destTitle = ''
   let showBack = true
@@ -209,47 +209,47 @@ const goBack = (e) => {
   
   console.log(`[Back] From: ${currentId} To: ${destId}`)
 
-  // 1. Hide Current Items (Children of the folder we are leaving)
+  // 1. Ocultar los elementos actuales (hijos de la carpeta que estamos abandonando)
   const currentItems = card.querySelectorAll(`.${currentId}`)
   currentItems.forEach(el => el.style.display = 'none')
   
-  // 2. Hide/Reset the Container Folder we are leaving
-  // It needs to look like a button/folder item again.
+  // 2. Ocultar/Reiniciar la carpeta contenedora que estamos abandonando
+  // Debe verse como un botón/elemento de carpeta nuevamente.
   currentFolderDiv.style.width = ''
   currentFolderDiv.style.cursor = 'pointer'
   
-  // Re-show the title of the folder we are leaving, since it is now just an item
+  // Mostrar el título de la carpeta que estamos abandonando, ya que ahora es solo un elemento
   const internalTitle = currentFolderDiv.querySelector('.folder-title')
   if (internalTitle) internalTitle.style.display = 'flex'
   
-  // 3. Show Destination Items (Siblings of the folder we just left)
+  // 3. Mostrar los elementos de destino (hermanos de la carpeta que acabamos de abandonar)
   const destItems = card.querySelectorAll(`.${destId}`)
   destItems.forEach(el => {
     el.style.setProperty('display', 'flex', 'important')
-    // If it's a folder (including the one we just left), ensure it looks right
+    // Si es una carpeta (incluida la que acabamos de abandonar), asegúrate de que se vea bien
     if(el.classList.contains('folder')) {
       el.style.flexDirection = 'column' 
       el.style.width = '100%' 
       
-      // Ensure their titles are visible (logic above handles the specific one we left, but good to be safe)
+      // Asegúrate de que sus títulos sean visibles (la lógica anterior maneja el específico que abandonamos, pero es bueno ser seguro)
       const t = el.querySelector('.folder-title')
       if(t) t.style.display = 'flex'
     }
   })
   
-  // 4. Update Header
+  // 4. Actualizar el encabezado
   const titleSpan = card.querySelector('.card-header .title .name')
   titleSpan.textContent = destTitle
   
-  // 5. Update Back Button
+  // 5. Actualizar el botón de retroceso
   if (!showBack) {
     btn.style.display = 'none'
   }
   
-  // 6. Update State
+  // 6. Actualizar el estado
   card.dataset.currentId = destId
   
-  // 7. Layout
+  // 7. Recalcular el diseño
   setTimeout(() => {
      card.style.height = 'auto'
      card.style.height = card.scrollHeight + 'px'

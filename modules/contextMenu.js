@@ -9,7 +9,6 @@ export function initContextMenu() {
   const menuEdit = document.getElementById('menuEdit')
   const menuDelete = document.getElementById('menuDelete')
   
-  // Card Context Menu placeholders
   const cardContextMenu = document.getElementById('cardContextMenu')
   const cardMenuEdit = document.getElementById('cardMenuEdit')
   const cardMenuNewFolder = document.getElementById('cardMenuNewFolder')
@@ -28,11 +27,11 @@ export function initContextMenu() {
   let targetIsFolder = false
   let cardTargetId = null
 
-  // --- Context Menu Handler ---
+  // --- Gestor Context Menu ---
   document.addEventListener('contextmenu', (e) => {
     hideContextMenu()
 
-    // 1. Check if right-clicked element is a bookmark link, folder, or search result item
+    // 1. Comprobar si el elemento derecho clicado es un enlace de marcador, carpeta o elemento de resultado de búsqueda
     const element = e.target.closest('.link, .folder, .search-result-item')
     
     if (element && element.dataset.id) {
@@ -43,20 +42,20 @@ export function initContextMenu() {
       targetId = element.dataset.id
       targetIsFolder = element.classList.contains('folder')
       
-      // Toggle Options based on type
+      // Opciones basadas en tipo
       if (targetIsFolder) {
-        // Folder options
+        // Opciones de carpeta
         menuClone.style.display = 'flex'
         menuOpenNewTab.style.display = 'none'
         menuSeparator.style.display = 'block'
       } else {
-        // Bookmark options
+        // Opciones de marcador
         menuClone.style.display = 'none'
         menuOpenNewTab.style.display = 'flex'
         menuSeparator.style.display = 'flex'
       }
 
-      // Position menu
+      // Posicionar menu
       const { clientX: mouseX, clientY: mouseY } = e
       
       contextMenu.style.left = `${mouseX}px`
@@ -65,7 +64,7 @@ export function initContextMenu() {
       return
     }
 
-    // 2. Check if right-clicked element is a CARD HEADER
+    // 2. Comprobar si el elemento derecho clicado es un encabezado de tarjeta
     const cardHeader = e.target.closest('.card-header')
     if (cardHeader) {
       const card = cardHeader.closest('.card')
@@ -79,13 +78,13 @@ export function initContextMenu() {
       }
     }
     
-    // 3. Block default context menu globally (except for inputs)
+    // 3. Bloquear el menu contextual globalmente (excepto para inputs)
     if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA' && !e.target.isContentEditable) {
         e.preventDefault()
     }
   })
 
-  // Hide context menu on click anywhere
+  // Ocultar menu contextual al hacer clic en cualquier lugar
   document.addEventListener('click', (e) => {
     if (!contextMenu.contains(e.target) && !cardContextMenu.contains(e.target)) {
       hideContextMenu()
@@ -97,9 +96,9 @@ export function initContextMenu() {
     cardContextMenu.style.display = 'none'
   }
 
-  // --- Actions ---
+  // --- Acciones ---
 
-  // CLONE
+  // CLONAR (Solo estructura de carpetas y subcarpetas)
   menuClone.addEventListener('click', () => {
     hideContextMenu()
     if (!targetId || !targetIsFolder) return
@@ -111,7 +110,7 @@ export function initContextMenu() {
        }
        const originalTree = results[0]
        
-       // Create root clone
+       // Crear raiz clonada
        const newTitle = originalTree.title + '_clone'
        const parentId = originalTree.parentId
        
@@ -123,7 +122,7 @@ export function initContextMenu() {
              console.error(chrome.runtime.lastError)
              return
           }
-          // Recursively copy folders only
+          // Copiar carpetas recursivamente
           if (originalTree.children) {
             copyFolders(originalTree.children, newFolder.id)
           }
@@ -137,7 +136,7 @@ export function initContextMenu() {
   
   function copyFolders(nodes, parentId) {
     nodes.forEach(node => {
-      // Only copy directories (no url)
+      // Solo copiar carpetas (no url)
       if (!node.url) {
         chrome.bookmarks.create({
           parentId: parentId,
@@ -151,7 +150,7 @@ export function initContextMenu() {
     })
   }
 
-  // OPEN IN NEW TAB
+  // Abrir en nueva pestaña
   menuOpenNewTab.addEventListener('click', () => {
     hideContextMenu()
     if (!targetId || targetIsFolder) return
@@ -164,7 +163,7 @@ export function initContextMenu() {
     })
   })
 
-  // EDIT
+  // Editar
   menuEdit.addEventListener('click', () => {
     hideContextMenu()
     if (!targetId) return
@@ -180,7 +179,7 @@ export function initContextMenu() {
       editTitleInput.value = bookmark.title
       
       if (isActuallyFolder) {
-        // HIDE URL INPUT
+        // Ocultar entrada de URL
         editUrlInput.style.display = 'none'
         if(editUrlInput.previousElementSibling) editUrlInput.previousElementSibling.style.display = 'none'
         editUrlInput.value = '' 
@@ -198,7 +197,7 @@ export function initContextMenu() {
     })
   })
 
-  // DELETE
+  // Borrar
   menuDelete.addEventListener('click', () => {
     hideContextMenu()
     if (!targetId) return
@@ -228,7 +227,7 @@ export function initContextMenu() {
     })
   })
   
-  // --- Modal Handlers ---
+  // --- Gestor de Modal ---
 
   function closeEditModal() {
     editModal.style.display = 'none'
@@ -240,7 +239,7 @@ export function initContextMenu() {
   closeModalBtn.addEventListener('click', closeEditModal)
   cancelEditBtn.addEventListener('click', closeEditModal)
 
-  // Save Edit
+  // Guardar Edición
   saveEditBtn.addEventListener('click', async () => {
     if (!targetId) return
 
@@ -253,7 +252,7 @@ export function initContextMenu() {
       return
     }
     
-    // Only validate URL if it is NOT a folder
+    //  Validar URL solo si no es una carpeta
     if (!isFolder && !newUrl) {
       showInfoModal('Error', 'URL es obligatoria')
       return
@@ -268,18 +267,18 @@ export function initContextMenu() {
         return
       }
       
-      // Update DOM
+      // Actualizar DOM
       const elements = document.querySelectorAll(`[data-id="${targetId}"]`)
       elements.forEach(el => {
          if (isFolder) {
-            // Update folder UI
+            // Actualizar UI de la carpeta
             if (el.classList.contains('folder')) {
                el.dataset.title = updatedNode.title
                const titleDiv = el.querySelector('.folder-title')
                if (titleDiv) titleDiv.textContent = updatedNode.title
             }
          } else {
-             // Update link UI
+             // Actualizar UI del enlace
              const a = el.querySelector('a')
              if (a) {
                 a.textContent = updatedNode.title
@@ -297,7 +296,7 @@ export function initContextMenu() {
 
   
   function showCardContextMenu(x, y, folderId) {
-     // Hide other menus
+     // Ocultar otros menus
      contextMenu.style.display = 'none'
      
      const card = document.querySelector(`.card[data-id="${folderId}"]`)
@@ -328,7 +327,7 @@ export function initContextMenu() {
      })
   }
 
-  // --- Card Actions ---
+  // --- Acciones de la card ---
   
   cardMenuEdit.addEventListener('click', () => {
       cardContextMenu.style.display = 'none'
@@ -377,7 +376,7 @@ export function initContextMenu() {
       })
   })
   
-  // DELETE CARD
+  // Borrar Card
   cardMenuDelete.addEventListener('click', () => {
       cardContextMenu.style.display = 'none'
       if (!cardTargetId) return
@@ -394,7 +393,7 @@ export function initContextMenu() {
       })
   })
   
-  // Close modal on click outside
+  // Cerrar modal al hacer clic fuera
   editModal.addEventListener('click', (e) => {
     if (e.target === editModal) {
       closeEditModal()

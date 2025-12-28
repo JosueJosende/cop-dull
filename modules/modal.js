@@ -1,15 +1,15 @@
 export function initModals() {
-  // Initialize standard modal closers if needed, 
-  // but usually they are handled when opening.
+  // Inicializar cierres estándar de modal si es necesario,
+  // pero generalmente se manejan al abrir.
   
-  // Close buttons for confirm modal
+  // Botones de cierre para modal de confirmación
   const closeConfirm = document.getElementById('closeConfirmModal')
   const cancelConfirm = document.getElementById('confirmCancelBtn')
   
   if (closeConfirm) closeConfirm.addEventListener('click', hideConfirmModal)
   if (cancelConfirm) cancelConfirm.addEventListener('click', hideConfirmModal)
   
-  // Close buttons for info modal
+  // Botones de cierre para modal de información
   const closeInfo = document.getElementById('closeInfoModal')
   const okInfo = document.getElementById('infoOkBtn')
   
@@ -20,7 +20,7 @@ export function initModals() {
 let onConfirmCallback = null
 let onInfoCallback = null
 
-// Confirm Modal Logic
+// Lógica del Modal de Confirmación
 export function showConfirmModal(title, message, callback) {
   const modal = document.getElementById('confirmModal')
   const titleEl = document.getElementById('confirmTitle')
@@ -32,7 +32,7 @@ export function showConfirmModal(title, message, callback) {
   
   onConfirmCallback = callback
   
-  // Remove previous listeners to avoid stacking
+  // Remover listeners anteriores para evitar la pila
   const newOkBtn = okBtn.cloneNode(true)
   okBtn.parentNode.replaceChild(newOkBtn, okBtn)
   
@@ -52,7 +52,7 @@ export function hideConfirmModal() {
   onConfirmCallback = null
 }
 
-// Info/Alert Modal Logic
+// Lógica del Modal de Información
 export function showInfoModal(title, message, callback) {
   const modal = document.getElementById('infoModal')
   const titleEl = document.getElementById('infoTitle')
@@ -64,7 +64,7 @@ export function showInfoModal(title, message, callback) {
   
   onInfoCallback = callback
   
-  // Handle OK click specifically if callback needed
+  // Manejar el clic de OK específicamente si se necesita un callback
   const newOkBtn = okBtn.cloneNode(true)
   okBtn.parentNode.replaceChild(newOkBtn, okBtn)
   
