@@ -32,7 +32,7 @@ export function initAddFolder() {
         parentId = modal.dataset.parentId
     }
 
-    chrome.bookmarks.create({
+    browser.bookmarks.create({
       parentId: parentId,
       title: title
     }, (newFolder) => {
@@ -75,7 +75,7 @@ async function refreshBookmarks() {
   
   container.innerHTML = '' // Limpiar el contenedor actual
   
-  chrome.bookmarks.getTree(async (nodes) => {
+  browser.bookmarks.getTree(async (nodes) => {
     await displayBookmarks(nodes)
     initDragDrop() // Volver a enlazar drag drop
   })

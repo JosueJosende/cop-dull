@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', async function () {
   await initSettings()
 
   // Recuperar bookmarks
-  chrome.bookmarks.getTree(function (bookmarkTreeNodes) {
+  browser.bookmarks.getTree(function (bookmarkTreeNodes) {
     displayBookmarks(bookmarkTreeNodes).then(() => {
         initDragDrop()
     })

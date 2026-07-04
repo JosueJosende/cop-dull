@@ -13,7 +13,7 @@ export function initSearch() {
   resultsContainer.style.transition = 'opacity 0.2s ease-in-out'
 
   // Obtener y aplanar marcadores
-  chrome.bookmarks.getTree((nodes) => {
+  browser.bookmarks.getTree((nodes) => {
     allBookmarks = flattenBookmarks(nodes[0], '')
   })
 

@@ -148,6 +148,8 @@
     </div>
   </div>
 
+  <!-- Cross-browser polyfill: Firefox has window.browser natively; alias it for Chrome -->
+  <script>window.browser = window.browser || chrome;</script>
   <script src="lib/minimasonry.min.js"></script>
   <script type="module" src="copdull.js"></script>
 </body>

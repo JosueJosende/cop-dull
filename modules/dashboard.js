@@ -108,7 +108,7 @@ function renderDashboard(container) {
 }
 
 function loadTopSites() {
-  chrome.topSites.get((data) => {
+  browser.topSites.get((data) => {
     const list = document.getElementById('topSitesList')
     if (!list) return
     
@@ -120,7 +120,7 @@ function loadTopSites() {
 }
 
 function loadRecentTabs() {
-  chrome.sessions.getRecentlyClosed({ maxResults: 10 }, (sessions) => {
+  browser.sessions.getRecentlyClosed({ maxResults: 10 }, (sessions) => {
     const list = document.getElementById('recentTabsList')
     if (!list) return
 
@@ -135,7 +135,7 @@ function loadRecentTabs() {
         const count = session.window.tabs.length
         const title = `${count} Tabs (Window)`
         // No podemos realmente enlazar a una "restauración de ventana" fácilmente con un enlace simple href, 
-        // necesitaría chrome.sessions.restore(session.sessionId).
+        // necesitaría browser.sessions.restore(session.sessionId).
         // Vamos a mantener los enlaces clicables por ahora o manejar el clic.
         
         const div = document.createElement('div')
@@ -146,7 +146,7 @@ function loadRecentTabs() {
           <span>${count} Pestañas (Ventana cerrada)</span>
         `
         div.addEventListener('click', () => {
-          chrome.sessions.restore(session.window.sessionId)
+          browser.sessions.restore(session.window.sessionId)
         })
         list.appendChild(div)
       }

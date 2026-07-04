@@ -202,9 +202,9 @@ export function initDragDrop() {
     
     console.log(`Moving ${id} to parent ${parentId} at index ${index}`)
 
-    chrome.bookmarks.move(id, destination, (result) => {
-       if (chrome.runtime.lastError) {
-         console.error(chrome.runtime.lastError.message)
+    browser.bookmarks.move(id, destination, (result) => {
+       if (browser.runtime.lastError) {
+         console.error(browser.runtime.lastError.message)
          // window.location.reload() // O mostrar error
        }
     })

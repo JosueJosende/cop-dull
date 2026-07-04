@@ -103,8 +103,8 @@ export function initContextMenu() {
     hideContextMenu()
     if (!targetId || !targetIsFolder) return
 
-    chrome.bookmarks.getSubTree(targetId, (results) => {
-       if (chrome.runtime.lastError || !results || !results.length) {
+    browser.bookmarks.getSubTree(targetId, (results) => {
+       if (browser.runtime.lastError || !results || !results.length) {
          showInfoModal('Error', 'Error cloning folder')
          return
        }
@@ -114,12 +114,12 @@ export function initContextMenu() {
        const newTitle = originalTree.title + '_clone'
        const parentId = originalTree.parentId
        
-       chrome.bookmarks.create({
+       browser.bookmarks.create({
          parentId: parentId,
          title: newTitle
        }, (newFolder) => {
-          if (chrome.runtime.lastError) {
-             console.error(chrome.runtime.lastError)
+          if (browser.runtime.lastError) {
+             console.error(browser.runtime.lastError)
              return
           }
           // Copiar carpetas recursivamente
@@ -138,7 +138,7 @@ export function initContextMenu() {
     nodes.forEach(node => {
       // Solo copiar carpetas (no url)
       if (!node.url) {
-        chrome.bookmarks.create({
+        browser.bookmarks.create({
           parentId: parentId,
           title: node.title
         }, (newSubFolder) => {
@@ -155,7 +155,7 @@ export function initContextMenu() {
     hideContextMenu()
     if (!targetId || targetIsFolder) return
 
-    chrome.bookmarks.get(targetId, (results) => {
+    browser.bookmarks.get(targetId, (results) => {
       const bookmark = results[0]
       if (bookmark && bookmark.url) {
         window.open(bookmark.url, '_blank')
@@ -168,8 +168,8 @@ export function initContextMenu() {
     hideContextMenu()
     if (!targetId) return
 
-    chrome.bookmarks.get(targetId, (results) => {
-      if (chrome.runtime.lastError || !results || !results.length) {
+    browser.bookmarks.get(targetId, (results) => {
+      if (browser.runtime.lastError || !results || !results.length) {
         showInfoModal('Error', 'Error fetching bookmark')
         return
       }
@@ -208,12 +208,12 @@ export function initContextMenu() {
 
     showConfirmModal(getTranslation('modalConfirmTitle'), msg, () => {
       const deleteAction = targetIsFolder 
-        ? (id, cb) => chrome.bookmarks.removeTree(id, cb)
-        : (id, cb) => chrome.bookmarks.remove(id, cb)
+        ? (id, cb) => browser.bookmarks.removeTree(id, cb)
+        : (id, cb) => browser.bookmarks.remove(id, cb)
 
       deleteAction(targetId, () => {
-         if (chrome.runtime.lastError) {
-           showInfoModal('Error', 'Error removing item: ' + chrome.runtime.lastError.message)
+         if (browser.runtime.lastError) {
+           showInfoModal('Error', 'Error removing item: ' + browser.runtime.lastError.message)
            return
          }
          if (targetElement) targetElement.remove()
@@ -261,9 +261,9 @@ export function initContextMenu() {
     const updates = { title: newTitle }
     if (!isFolder) updates.url = newUrl
 
-    chrome.bookmarks.update(targetId, updates, (updatedNode) => {
-      if (chrome.runtime.lastError) {
-        showInfoModal('Error', 'Error: ' + chrome.runtime.lastError.message)
+    browser.bookmarks.update(targetId, updates, (updatedNode) => {
+      if (browser.runtime.lastError) {
+        showInfoModal('Error', 'Error: ' + browser.runtime.lastError.message)
         return
       }
       
@@ -311,7 +311,7 @@ export function initContextMenu() {
      
      cardTargetId = activeFolderId
      
-     chrome.bookmarks.getChildren(activeFolderId, (children) => {
+     browser.bookmarks.getChildren(activeFolderId, (children) => {
          const hasSubfolders = children.some(c => !c.url)
          const hasLinks = children.some(c => c.url)
          
@@ -336,7 +336,7 @@ export function initContextMenu() {
       targetId = cardTargetId
       targetIsFolder = true 
       
-      chrome.bookmarks.get(targetId, (results) => {
+      browser.bookmarks.get(targetId, (results) => {
           if (!results || !results.length) return
           const node = results[0]
           
@@ -369,7 +369,7 @@ export function initContextMenu() {
       cardContextMenu.style.display = 'none'
       if (!cardTargetId) return
       
-      chrome.bookmarks.getChildren(cardTargetId, (children) => {
+      browser.bookmarks.getChildren(cardTargetId, (children) => {
           children.forEach(c => {
               if (c.url) window.open(c.url, '_blank')
           })
@@ -384,7 +384,7 @@ export function initContextMenu() {
       const msg = 'ATENCIÓN: Se eliminará la carpeta y TODO su contenido (carpetas y archivos). ¿Estás seguro?' 
       
       showConfirmModal(getTranslation('modalConfirmTitle'), msg, () => {
-          chrome.bookmarks.removeTree(cardTargetId, () => {
+          browser.bookmarks.removeTree(cardTargetId, () => {
               const card = document.querySelector(`.card[data-id="${cardTargetId}"]`)
               if (card) card.remove()
               

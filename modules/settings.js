@@ -318,8 +318,8 @@ function saveConfig() {
   localStorage.setItem('copdullConfig', JSON.stringify(currentConfig))
 
   // If sync is enabled, also save to cloud
-  if (currentConfig.enableSync && chrome && chrome.storage && chrome.storage.sync) {
-    chrome.storage.sync.set({ copdullConfig: currentConfig })
+  if (currentConfig.enableSync && browser && browser.storage && browser.storage.sync) {
+    browser.storage.sync.set({ copdullConfig: currentConfig })
   }
 }
 
@@ -338,8 +338,8 @@ function loadConfig() {
     const mergedLocal = { ...DEFAULT_CONFIG, ...localConfig }
     
     // 2. Check Sync if enabled
-    if (mergedLocal.enableSync && chrome && chrome.storage && chrome.storage.sync) {
-      chrome.storage.sync.get(['copdullConfig'], (result) => {
+    if (mergedLocal.enableSync && browser && browser.storage && browser.storage.sync) {
+      browser.storage.sync.get(['copdullConfig'], (result) => {
         if (result.copdullConfig) {
           // Merge: Default < Local < Sync (Sync wins if enabled?)
           // actually if user enabled sync, we trust sync data.

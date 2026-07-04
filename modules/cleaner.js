@@ -126,7 +126,7 @@ function renderCleanerStructure(container) {
 let allBookmarksCache = []
 
 function analyzeBookmarks() {
-  chrome.bookmarks.getTree((nodes) => {
+  browser.bookmarks.getTree((nodes) => {
     const allItems = flattenBookmarks(nodes[0], '')
     allBookmarksCache = allItems
     
@@ -307,8 +307,8 @@ function executeDelete() {
         const type = input.dataset.type
         
         const removeFn = type === 'folder' 
-          ? chrome.bookmarks.removeTree 
-          : chrome.bookmarks.remove
+          ? browser.bookmarks.removeTree 
+          : browser.bookmarks.remove
           
         removeFn(id, () => {
           processed++

@@ -3,6 +3,12 @@
   "name": "CopDull",
   "version": "1.0",
   "description": "Extension for Chrome that allows you to have all bookmarks open when opening a new page.",
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "copdull@example.org",
+      "strict_min_version": "109.0"
+    }
+  },
   "permissions": [
     "tabs",
     "bookmarks",
